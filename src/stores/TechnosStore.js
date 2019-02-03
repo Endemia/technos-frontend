@@ -1,8 +1,11 @@
-import { observable, action } from "mobx";
+import { observable, action, runInAction } from "mobx";
 import TechnosApi from '../api/TechnosApi';
 
 class TechnosStore {
-	@observable technos = [];
+	@observable technos = {
+		nodes:[],
+		links:[]
+	};
 
 	technosApi = new TechnosApi();
 
@@ -10,8 +13,14 @@ class TechnosStore {
 		this.technos.push(techno);
 	}
 
+	@action.bound
 	getTechnos() {
-		this.technosApi.getTechnos();
+		this.technosApi.getTechnos().then(res => {
+			runInAction(() => {
+				this.technos.nodes = res.nodes;
+				this.technos.links = res.links;
+			})
+		});
 	}
 }
 

@@ -1,50 +1,82 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { observer, inject } from 'mobx-react';
+import { observer } from 'mobx-react';
 import joint from 'jointjs/index';
 import Rectangle from '../jointjs-configuration/Rectangle'
 
-@inject("technosStore")
 @observer
 class Graph extends React.Component {
 
 	constructor(props) {
         super(props);
         this.graph = new joint.dia.Graph();
-        this.cells=[];
+        this.nodeMap = {};
+
+        joint.layout.DirectedGraph.layout(this.graph);
     }
 
-
     componentDidMount() {
+
+        console.log("componentDidMount");
+
         this.paper = new joint.dia.Paper({
             el: ReactDOM.findDOMNode(this.refs.placeholder),
             width: 1500,
             height: 700,
+            background: { color: '#c0c0c0'},
             model: this.graph
         });
-        this.graph.addCells(this.cells);
-
-        this.props.nodes.forEach(node => {
-            const label = node[Object.keys(node)[0]];
-            console.log('>>>> ', label);
-            this.cells.push(new Rectangle(100,100,200,label).getShape());
-        });
-
+        
     }
 
-	addNode(title) {
+	addNode(tech) {
 
-        const rect = new Rectangle(100, 100, 200, 'NodeJS').getShape();
-        this.cells.push(rect);
+        const techRect = new Rectangle(100, 100, 200, tech).getShape();
+        techRect.addTo(this.graph);
 
+        this.nodeMap[tech]=techRect.id;
+    }
+
+    addLink(link) {
+
+        const sourceId = this.nodeMap[link.from];
+        const destId = this.nodeMap[link.to];
+
+
+        const arrow = new joint.shapes.standard.Link({
+            source: { id: sourceId },
+            target: { id: destId },
+            attrs: {
+                '.connection': {
+                    'fill': 'none',
+                    'stroke-linejoin': 'round',
+                    'stroke-width': '2',
+                    'stroke': '#4b4a67'
+                }
+            }
+        });
+
+        arrow.addTo(this.graph);
     }
 
     render() {
 
+        this.props.technos.nodes.forEach((node) => {
+            console.log(node);
+            this.addNode(node);
+        });
+        this.props.technos.links.forEach((link) => {
+            this.addLink(link);
+        });
+
+        joint.layout.DirectedGraph.layout(this.graph, { marginX: 50, marginY: 50 });
+
         return (
-            <div id="playground" ref="placeholder">
+            <div>
+                <div id="playground" ref="placeholder">
+                </div>
             </div>
-        );
+        )
     }
 }
 

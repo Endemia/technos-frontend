@@ -7,14 +7,11 @@ class TechnosApi {
 	}
 
 	getTechnos() {
-		console.log(this.url + '/');
-		axios.get(this.url + '/')
+		return axios.get(this.url + '/')
   			.then(function (response) {
-			    console.log(response);
-			    return response;
+			    return response.data;
   			})
   			.catch(function (error) {
-			    // handle error
 			    console.log(error);
 	  	    });
 	}

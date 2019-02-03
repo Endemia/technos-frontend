@@ -1,29 +1,26 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
 import { observer, inject } from 'mobx-react';
+
 import Graph from './graph.component';
 
 @inject("technosStore")
 @observer
 class GraphContainer extends React.Component {
 
-	constructor(props) {
-        super(props);
-    }
-
     getNodes() {
         this.props.technosStore.getTechnos();
     }
 
-    render() {
-        
-        this.getNodes();
+	render() {
 
-        return (
-            <Graph nodes={this.props.technosStore.technos}>
-            </Graph>);
-    }
+		this.getNodes();
 
+		return (
+			<div>
+				<Graph technos={this.props.technosStore.technos}></Graph>
+			</div>
+		)
+	}
 }
 
 export default GraphContainer;

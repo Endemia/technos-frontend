@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import './App.css';
 import technosStore from './stores/TechnosStore';
-import { Provider, observer  } from 'mobx-react';
+import { Provider } from 'mobx-react';
 
 
 import GraphContainer from './components/graphContainer.component';
