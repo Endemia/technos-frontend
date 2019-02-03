@@ -2,7 +2,9 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { observer } from 'mobx-react';
 import joint from 'jointjs/index';
-import Rectangle from '../jointjs-configuration/Rectangle'
+import Rectangle from '../jointjs-configuration/Rectangle';
+import DecoratedRectangle from '../jointjs-configuration/DecoratedRectangle';
+import Test from '../jointjs-configuration/Test';
 
 @observer
 class Graph extends React.Component {
@@ -17,8 +19,6 @@ class Graph extends React.Component {
 
     componentDidMount() {
 
-        console.log("componentDidMount");
-
         this.paper = new joint.dia.Paper({
             el: ReactDOM.findDOMNode(this.refs.placeholder),
             width: 1500,
@@ -26,12 +26,12 @@ class Graph extends React.Component {
             background: { color: '#c0c0c0'},
             model: this.graph
         });
-        
+
     }
 
 	addNode(tech) {
 
-        const techRect = new Rectangle(100, 100, 200, tech).getShape();
+        const techRect = new Test(100, 100, tech).getShape();
         techRect.addTo(this.graph);
 
         this.nodeMap[tech]=techRect.id;

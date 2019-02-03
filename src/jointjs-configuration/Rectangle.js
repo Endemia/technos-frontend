@@ -2,17 +2,17 @@ import joint from 'jointjs/index';
 
 class Rectangle {
 
-  	constructor(x, y, w, label) {
+  	constructor(x, y, label) {
     	this.x = x;
     	this.y = y;
-    	this.w = w;
     	this.label = label;
+        this.w = label.length * 10 + 30;
   	}
 
 	getShape() {
 		var rect2 = new joint.shapes.standard.Rectangle();
         rect2.position(this.x, this.y);
-        rect2.resize(this.label.length * 15 + 30, 50);
+        rect2.resize(this.w, 50);
         rect2.attr({
             body: {
                 fill: '#00A878',
