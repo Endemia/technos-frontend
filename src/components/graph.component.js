@@ -5,6 +5,7 @@ import joint from 'jointjs/index';
 import Rectangle from '../jointjs-configuration/Rectangle';
 import DecoratedRectangle from '../jointjs-configuration/DecoratedRectangle';
 import Test from '../jointjs-configuration/Test';
+import $ from 'jquery';
 
 @observer
 class Graph extends React.Component {
@@ -23,7 +24,7 @@ class Graph extends React.Component {
             el: ReactDOM.findDOMNode(this.refs.placeholder),
             width: 1500,
             height: 700,
-            background: { color: '#c0c0c0'},
+            background: { color: '#eeeeee'},
             model: this.graph
         });
 
@@ -31,7 +32,7 @@ class Graph extends React.Component {
 
 	addNode(tech) {
 
-        const techRect = new Test(100, 100, tech).getShape();
+        const techRect = new Test(100, 100, tech, 0).getShape();
         techRect.addTo(this.graph);
 
         this.nodeMap[tech]=techRect.id;

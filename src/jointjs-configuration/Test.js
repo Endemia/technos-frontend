@@ -24,8 +24,6 @@ import $ from 'jquery';
             '<div class="stars" >',
             '<div class="star1" >',
             '<div class="star2" >',
-            '<div class="star3" >',
-            '</div>',
             '</div>',
             '</div>',
             '</div>',
@@ -38,12 +36,21 @@ import $ from 'jquery';
             joint.dia.ElementView.prototype.initialize.apply(this, arguments);
 
             this.$box = $(_.template(this.template)());
-            // Prevent paper from handling pointerdown.
-            console.log(this.$box.find('.star1'));
-            this.$box.find('.star1').on('mouseover', function(evt) {
-                console.log(evt);
-                evt.stopPropagation();
+
+            
+            
+            this.$box.find('.star1').on('mousedown click', e => {
+                this.model.set('note', 1);
+                this.updateBox();
+                e.stopPropagation();
             });
+            this.$box.find('.star2').on('mousedown click', e => {
+                this.model.set('note', 2);
+                this.updateBox();
+                e.stopPropagation();
+            });
+
+
             // Update the box position whenever the underlying model changes.
             this.model.on('change', this.updateBox, this);
             // Remove the box when the model gets removed from the graph.
@@ -69,6 +76,18 @@ import $ from 'jquery';
                 top: bbox.y,
                 transform: 'rotate(' + (this.model.get('angle') || 0) + 'deg)'
             });
+
+            if (this.model.get('note') > 0) {
+                this.$box.find('.star1').addClass('active');
+            } else {
+                this.$box.find('.star1').removeClass('active');
+            }
+            if (this.model.get('note') > 1) {
+                this.$box.find('.star2').addClass('active');
+            } else {
+                this.$box.find('.star2').removeClass('active');
+            }
+            
         },
         removeBox: function(evt) {
             this.$box.remove();
@@ -78,10 +97,11 @@ import $ from 'jquery';
 
 class Test {
 
-    constructor(x, y, label) {
+    constructor(x, y, label, note) {
         this.x = x;
         this.y = y;
         this.label = label;
+        this.note = note;
         this.w = label.length * 10 + 30;
     }
 
@@ -90,7 +110,7 @@ class Test {
             position: { x: this.x, y: this.y },
             size: { width: this.w, height: 60 },
             label: this.label,
-            select: 'one'
+            note: this.note
         });
 
         return decoratedRect;
