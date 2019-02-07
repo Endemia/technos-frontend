@@ -6,8 +6,12 @@ class TechnosApi {
 		this.url = 'http://localhost:8080';
 	}
 
-	getTechnos() {
-		return axios.get(this.url + '/')
+	getTechnos(name) {
+		let url = this.url + '/';
+		if (name) {
+			url += '?name=' + name;
+		}
+		return axios.get(url)
   			.then(function (response) {
 			    return response.data;
   			})

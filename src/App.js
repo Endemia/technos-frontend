@@ -3,7 +3,6 @@ import './App.css';
 import technosStore from './stores/TechnosStore';
 import { Provider } from 'mobx-react';
 
-
 import GraphContainer from './components/graphContainer.component';
 
 class App extends Component {

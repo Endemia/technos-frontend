@@ -14,8 +14,8 @@ class TechnosStore {
 	}
 
 	@action.bound
-	getTechnos() {
-		this.technosApi.getTechnos().then(res => {
+	getTechnos(name) {
+		this.technosApi.getTechnos(name).then(res => {
 			runInAction(() => {
 				this.technos.nodes = res.nodes;
 				this.technos.links = res.links;

@@ -2,10 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { observer } from 'mobx-react';
 import joint from 'jointjs/index';
-import Rectangle from '../jointjs-configuration/Rectangle';
-import DecoratedRectangle from '../jointjs-configuration/DecoratedRectangle';
 import Test from '../jointjs-configuration/Test';
-import $ from 'jquery';
 
 @observer
 class Graph extends React.Component {
@@ -22,7 +19,7 @@ class Graph extends React.Component {
 
         this.paper = new joint.dia.Paper({
             el: ReactDOM.findDOMNode(this.refs.placeholder),
-            width: 1500,
+            width: "100%",
             height: 700,
             background: { color: '#eeeeee'},
             model: this.graph
@@ -39,31 +36,44 @@ class Graph extends React.Component {
     }
 
     addLink(link) {
+        if (link.from && link.to) {
+            const sourceId = this.nodeMap[link.from];
 
-        const sourceId = this.nodeMap[link.from];
-        const destId = this.nodeMap[link.to];
+            link.to.forEach(l => {
+                const destId = this.nodeMap[l];
 
+                const arrow = new joint.shapes.standard.Link({
+                    source: { id: sourceId },
+                    target: { id: destId },
+                    attrs: {
+                        '.connection': {
+                            'fill': 'none',
+                            'stroke-linejoin': 'round',
+                            'stroke-width': '2',
+                            'stroke': '#4b4a67'
+                        }
+                    }
+                });
 
-        const arrow = new joint.shapes.standard.Link({
-            source: { id: sourceId },
-            target: { id: destId },
-            attrs: {
-                '.connection': {
-                    'fill': 'none',
-                    'stroke-linejoin': 'round',
-                    'stroke-width': '2',
-                    'stroke': '#4b4a67'
-                }
+                arrow.addTo(this.graph);
+            });
+        }
+    }
+
+    clear() {
+        Object.keys(this.nodeMap).forEach(key => {
+            const cell = this.graph.getCell(this.nodeMap[key]);
+            if (cell) {
+                cell.remove();
             }
         });
-
-        arrow.addTo(this.graph);
+        this.nodeMap = {};
     }
 
     render() {
-
+        this.clear();
+        
         this.props.technos.nodes.forEach((node) => {
-            console.log(node);
             this.addNode(node);
         });
         this.props.technos.links.forEach((link) => {
@@ -73,7 +83,7 @@ class Graph extends React.Component {
         joint.layout.DirectedGraph.layout(this.graph, { marginX: 50, marginY: 50 });
 
         return (
-            <div>
+            <div className="graph">
                 <div id="playground" ref="placeholder">
                 </div>
             </div>
