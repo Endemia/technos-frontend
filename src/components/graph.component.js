@@ -39,24 +39,22 @@ class Graph extends React.Component {
         if (link.from && link.to) {
             const sourceId = this.nodeMap[link.from];
 
-            link.to.forEach(l => {
-                const destId = this.nodeMap[l];
+            const destId = this.nodeMap[link.to];
 
-                const arrow = new joint.shapes.standard.Link({
-                    source: { id: sourceId },
-                    target: { id: destId },
-                    attrs: {
-                        '.connection': {
-                            'fill': 'none',
-                            'stroke-linejoin': 'round',
-                            'stroke-width': '2',
-                            'stroke': '#4b4a67'
-                        }
+            const arrow = new joint.shapes.standard.Link({
+                source: { id: sourceId },
+                target: { id: destId },
+                attrs: {
+                    '.connection': {
+                        'fill': 'none',
+                        'stroke-linejoin': 'round',
+                        'stroke-width': '2',
+                        'stroke': '#4b4a67'
                     }
-                });
-
-                arrow.addTo(this.graph);
+                }
             });
+
+            arrow.addTo(this.graph);
         }
     }
 
@@ -74,6 +72,7 @@ class Graph extends React.Component {
         this.clear();
         
         this.props.technos.nodes.forEach((node) => {
+            console.log(node);
             this.addNode(node);
         });
         this.props.technos.links.forEach((link) => {

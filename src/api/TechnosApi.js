@@ -1,4 +1,5 @@
 import axios from 'axios';
+import config from '../conf/config.json';
 
 class TechnosApi {
 
@@ -7,9 +8,9 @@ class TechnosApi {
 	}
 
 	getTechnos(name) {
-		let url = this.url + '/';
+		let url = this.url + '/?depth=' + config.treeDepth;
 		if (name) {
-			url += '?name=' + name;
+			url += '&name=' + name;
 		}
 		return axios.get(url)
   			.then(function (response) {
