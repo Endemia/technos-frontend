@@ -75,13 +75,13 @@
     background:url(../img/gold_star.png) no-repeat;
 }
 .star1.active {
-    background:url(../img/gold_star.png) no-repeat;
+    background:url(../img/active_star.png) no-repeat;
 }
 .star2.active {
-    background:url(../img/gold_star.png) no-repeat;
+    background:url(../img/active_star.png) no-repeat;
 }
 .star3.active {
-    background:url(../img/gold_star.png) no-repeat;
+    background:url(../img/active_star.png) no-repeat;
 }
 .searchBox {
     width:100%;

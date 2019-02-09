@@ -39,13 +39,24 @@ import $ from 'jquery';
 
             
             
-            this.$box.find('.star1').on('mousedown click', e => {
-                this.model.set('note', 1);
+            this.$box.find('.star1').on('mousedown', e => {
+                console.log(this.model.get('note'));
+                if (this.model.get('note') == 1) {
+                    console.log("reset à 0");
+                    this.model.set('note', 0);
+                } else {
+                    console.log("set à 1");
+                    this.model.set('note', 1);
+                }
                 this.updateBox();
                 e.stopPropagation();
             });
-            this.$box.find('.star2').on('mousedown click', e => {
-                this.model.set('note', 2);
+            this.$box.find('.star2').on('mousedown', e => {
+                if (this.model.get('note') == 2) {
+                    this.model.set('note', 0);
+                } else {
+                    this.model.set('note', 2);
+                }
                 this.updateBox();
                 e.stopPropagation();
             });
