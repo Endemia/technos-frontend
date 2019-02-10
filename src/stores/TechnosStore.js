@@ -14,8 +14,8 @@ class TechnosStore {
 	}
 
 	@action.bound
-	getTechnos(name) {
-		this.technosApi.getTechnos(name).then(res => {
+	getTechnos(name, exactMatch, depth) {
+		this.technosApi.getTechnos(name, exactMatch, depth).then(res => {
 			runInAction(() => {
 				this.technos.nodes = this.formatNodes(res);
 				this.technos.links = this.formatLinks(res);
@@ -53,7 +53,6 @@ class TechnosStore {
 				})
 			}
 		})
-		console.log(links);
 		return links;
 	}
 }
