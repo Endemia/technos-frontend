@@ -25,11 +25,20 @@
     z-index: 2;
     min-width: 100px;
 }
+.html-element.focus {
+    background: #b05858;
+}
 .graph {
     position: absolute;
-    top: 40px;
+    top: 86px;
     left: 0;
     right: 0;
+}
+.search-already-exists {
+    background-color: #efefef;
+    margin-top: 20px;
+    overflow-y: scroll;
+    max-height: 300px;
 }
 .star1, .star2, .star3  {
     /* Enable interacting with inputs only. */

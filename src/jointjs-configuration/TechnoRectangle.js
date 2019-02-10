@@ -12,9 +12,6 @@ import $ from 'jquery';
         }, joint.shapes.basic.Rect.prototype.defaults)
     });
 
-// Create a custom view for that element that displays an HTML div above it.
-// -------------------------------------------------------------------------
-
     joint.shapes.html.ElementView = joint.dia.ElementView.extend({
 
         template: [
@@ -36,23 +33,18 @@ import $ from 'jquery';
             joint.dia.ElementView.prototype.initialize.apply(this, arguments);
 
             this.$box = $(_.template(this.template)());
-
-            
             
             this.$box.find('.star1').on('mousedown', e => {
-                console.log(this.model.get('note'));
-                if (this.model.get('note') == 1) {
-                    console.log("reset à 0");
+                if (this.model.get('note') === 1) {
                     this.model.set('note', 0);
                 } else {
-                    console.log("set à 1");
                     this.model.set('note', 1);
                 }
                 this.updateBox();
                 e.stopPropagation();
             });
             this.$box.find('.star2').on('mousedown', e => {
-                if (this.model.get('note') == 2) {
+                if (this.model.get('note') === 2) {
                     this.model.set('note', 0);
                 } else {
                     this.model.set('note', 2);
@@ -61,10 +53,7 @@ import $ from 'jquery';
                 e.stopPropagation();
             });
 
-
-            // Update the box position whenever the underlying model changes.
             this.model.on('change', this.updateBox, this);
-            // Remove the box when the model gets removed from the graph.
             this.model.on('remove', this.removeBox, this);
 
             this.updateBox();
@@ -76,9 +65,7 @@ import $ from 'jquery';
             return this;
         },
         updateBox: function() {
-            // Set the position and dimension of the box so that it covers the JointJS element.
             var bbox = this.model.getBBox();
-            // Example of updating the HTML with a data stored in the cell model.
             this.$box.find('label').text(this.model.get('label'));
             this.$box.css({
                 width: bbox.width,
@@ -87,6 +74,9 @@ import $ from 'jquery';
                 top: bbox.y,
                 transform: 'rotate(' + (this.model.get('angle') || 0) + 'deg)'
             });
+            if (this.model.get('focus')) {
+                this.$box.addClass('focus');
+            }
 
             if (this.model.get('note') > 0) {
                 this.$box.find('.star1').addClass('active');
@@ -106,13 +96,14 @@ import $ from 'jquery';
     });
 
 
-class Test {
+class TechnoRectangle {
 
-    constructor(x, y, label, note) {
+    constructor(x, y, label, note, focus) {
         this.x = x;
         this.y = y;
         this.label = label;
         this.note = note;
+        this.focus = focus;
         this.w = label.length * 10 + 30;
     }
 
@@ -121,11 +112,12 @@ class Test {
             position: { x: this.x, y: this.y },
             size: { width: this.w, height: 60 },
             label: this.label,
-            note: this.note
+            note: this.note,
+            focus: this.focus,
         });
 
         return decoratedRect;
     }
 }
 
-export default Test;
+export default TechnoRectangle;
