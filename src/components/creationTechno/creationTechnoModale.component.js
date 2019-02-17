@@ -1,15 +1,9 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
 import { observer, inject } from 'mobx-react';
-import joint from 'jointjs/index';
-import TechnoRectangle from '../jointjs-configuration/TechnoRectangle';
-import TechnosApi from '../api/TechnosApi';
 import { debounce } from "throttle-debounce";
-
+import TechnosApi from '../../api/TechnosApi';
 import { withStyles } from '@material-ui/core/styles';
-import Fab from '@material-ui/core/Fab';
-import AddIcon from '@material-ui/icons/Add';
-import Button from '@material-ui/core/Button';
+
 import TextField from '@material-ui/core/TextField';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
@@ -22,106 +16,26 @@ import ListItemText from '@material-ui/core/ListItemText';
 import Grid from '@material-ui/core/Grid';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ForwardIcon from '@material-ui/icons/Forward';
+import Button from '@material-ui/core/Button';
 
 const styles = theme => ({
-    fab: {
-        position: 'absolute',
-        top: 0,
-        left: 950,
-        margin: theme.spacing.unit,
-    }
 });
 
-@inject("searchStore", "technosStore")
+@inject("searchStore", "technosStore", "notesStore")
 @observer
-class Graph extends React.Component {
+class CreationTechnoModale extends React.Component {
 
-    state = {
-        open: false,
+	state = {
         createName: ""
     }
 
 	constructor(props) {
         super(props);
-        this.graph = new joint.dia.Graph();
-        this.nodeMap = {};
-
-        joint.layout.DirectedGraph.layout(this.graph);
-        this.handleClickOpen = this.handleClickOpen.bind(this);
-        this.handleClose = this.handleClose.bind(this);
         this.handleCreate = this.handleCreate.bind(this);
         this.handleChangeCreateName = this.handleChangeCreateName.bind(this);
-        this.updateExistingListDebounced = debounce(500, this.updateExistingList);
+        this.updateExistingListDebounced = debounce(300, this.updateExistingList);
     }
 
-    componentDidMount() {
-
-        this.paper = new joint.dia.Paper({
-            el: ReactDOM.findDOMNode(this.refs.placeholder),
-            width: 1024,
-            height: 700,
-            background: { color: '#eeeeee'},
-            model: this.graph,
-            restrictTranslate: true
-        });
-
-    }
-
-	addNode(tech) {
-
-        let focus = false;
-        const searchQuery = this.props.searchStore.query;
-        if (searchQuery) {
-            this.regexpName = new RegExp(searchQuery.trim(), 'i');
-            focus = this.regexpName.test(tech);
-        }
-
-        const techRect = new TechnoRectangle(100, 100, tech, 0, focus).getShape();
-        techRect.addTo(this.graph);
-
-        this.nodeMap[tech]=techRect.id;
-    }
-
-    addLink(link) {
-        if (link.from && link.to) {
-            const sourceId = this.nodeMap[link.from];
-
-            const destId = this.nodeMap[link.to];
-
-            const arrow = new joint.shapes.standard.Link({
-                source: { id: sourceId },
-                target: { id: destId },
-                attrs: {
-                    '.connection': {
-                        'fill': 'none',
-                        'stroke-linejoin': 'round',
-                        'stroke-width': '2',
-                        'stroke': '#4b4a67'
-                    }
-                }
-            });
-
-            arrow.addTo(this.graph);
-        }
-    }
-
-    clear() {
-        Object.keys(this.nodeMap).forEach(key => {
-            const cell = this.graph.getCell(this.nodeMap[key]);
-            if (cell) {
-                cell.remove();
-            }
-        });
-        this.nodeMap = {};
-    }
-
-    handleClickOpen() {
-        this.setState({ open: true });
-    }
-    handleClose() {
-        this.setState({ open: false, createName: "" });
-        this.props.searchStore.clearExistingTechnos();
-    }
     handleCreate() {
         new TechnosApi().createTechno(this.state.createName);
     }
@@ -138,34 +52,19 @@ class Graph extends React.Component {
             this.props.searchStore.clearExistingTechnos();
         }
     }
-    goToTechno(technoName) {
+
+	goToTechno(technoName) {
         this.props.technosStore.getTechnos(technoName, true);
-        this.handleClose();
+        this.props.onClose();
     }
 
     render() {
 
         const { classes } = this.props;
 
-        this.clear();
-        
-        this.props.technos.nodes.forEach((node) => {
-            this.addNode(node);
-        });
-        this.props.technos.links.forEach((link) => {
-            this.addLink(link);
-        });
-
-        joint.layout.DirectedGraph.layout(this.graph, { marginX: 50, marginY: 50 });
-
         return (
-            <div className="graph">
-                <Fab color="secondary" aria-label="Add" className={classes.fab} onClick={this.handleClickOpen}>
-                    <AddIcon />
-                </Fab>
-                <div id="playground" ref="placeholder">
-                </div>
-                <Dialog open={this.state.open} onClose={this.handleClose} aria-labelledby="form-dialog-title" >
+        	<div>
+        		<Dialog open={this.props.open} onClose={this.props.onClose} aria-labelledby="form-dialog-title" >
                     <DialogTitle id="form-dialog-title">Ajouter une techno</DialogTitle>
                     <DialogContent>
                         <DialogContentText>
@@ -195,13 +94,14 @@ class Graph extends React.Component {
                         </Grid>
                     </DialogContent>
                     <DialogActions>
-                        <Button onClick={this.handleClose} color="primary">Cancel</Button>
+                        <Button onClick={this.props.onClose} color="primary">Cancel</Button>
                         <Button disabled={this.props.searchStore.creationDisabled} onClick={this.handleCreate} color="primary">Create</Button>
                     </DialogActions>
                 </Dialog>
             </div>
         )
     }
+
 }
 
-export default withStyles(styles)(Graph);
+export default withStyles(styles)(CreationTechnoModale);
