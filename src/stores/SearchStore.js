@@ -32,6 +32,7 @@ class SearchStore {
 	@action.bound
 	clearExistingTechnos() {
 		this.existingTechnos.clear();
+		this.searchingExistingTechnos = false;
 	}
 
 	sortTechnosByName(technos) {

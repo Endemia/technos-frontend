@@ -33,12 +33,14 @@ import $ from 'jquery';
             joint.dia.ElementView.prototype.initialize.apply(this, arguments);
 
             this.$box = $(_.template(this.template)());
-            
+
             this.$box.find('.star1').on('mousedown', e => {
                 if (this.model.get('note') === 1) {
                     this.model.set('note', 0);
+                    this.model.get('onUpdateNote')(this.model.get('label'), 0);
                 } else {
                     this.model.set('note', 1);
+                    this.model.get('onUpdateNote')(this.model.get('label'), 1);
                 }
                 this.updateBox();
                 e.stopPropagation();
@@ -46,8 +48,10 @@ import $ from 'jquery';
             this.$box.find('.star2').on('mousedown', e => {
                 if (this.model.get('note') === 2) {
                     this.model.set('note', 0);
+                    this.model.get('onUpdateNote')(this.model.get('label'), 0);
                 } else {
                     this.model.set('note', 2);
+                    this.model.get('onUpdateNote')(this.model.get('label'), 2);
                 }
                 this.updateBox();
                 e.stopPropagation();
@@ -98,12 +102,13 @@ import $ from 'jquery';
 
 class TechnoRectangle {
 
-    constructor(x, y, label, note, focus) {
+    constructor(x, y, label, note, focus, onUpdateNote) {
         this.x = x;
         this.y = y;
         this.label = label;
         this.note = note;
         this.focus = focus;
+        this.onUpdateNote = onUpdateNote;
         this.w = label.length * 10 + 30;
     }
 
@@ -114,6 +119,7 @@ class TechnoRectangle {
             label: this.label,
             note: this.note,
             focus: this.focus,
+            onUpdateNote: this.onUpdateNote,
         });
 
         return decoratedRect;
