@@ -1,31 +1,32 @@
-import axios from 'axios';
+import { createApolloFetch } from 'apollo-fetch'
 import config from '../conf/config.json';
 
 class TechnosApi {
 
 	constructor() {
-		this.url = 'http://localhost:8080';
+		const uri= 'http://localhost:8080/graphql';
+		this.apolloFetch = createApolloFetch({ uri });
 	}
 
 	getTechnos(name, exactMatch, depth) {
-		let url = this.url + "/?1";
-		if (depth !== undefined) {
-			url += '&depth=' + depth;
-		} else {
-			url += '&depth=' + config.treeDepth;
-		}
+		name = name || "";
+		exactMatch = exactMatch || false;
+		depth = depth || config.treeDepth;
+		
+		const query = `
+  			{
+  				findTechnos(name: "${name}", depth: ${depth}, exactMatch: ${exactMatch}) {
+    				name
+    				children {
+	      				name
+    				}
+    			}
+  			}
+		`
 
-		if (name) {
-			url += '&name=' + name;
-		}
-
-		if (exactMatch) {
-			url += '&exactMatch=true'
-		}
-
-		return axios.get(url)
+		return this.apolloFetch({ query })
   			.then(function (response) {
-			    return response.data;
+			    return response.data.findTechnos;
   			})
   			.catch(function (error) {
 			    console.log(error);
@@ -34,10 +35,17 @@ class TechnosApi {
 	}
 
 	createTechno(name) {
-		let url = this.url + '/';
-		return axios.post(url, {'name': name})
+		const query = `
+	  		mutation {
+	  			addTechno(name: "${name}") {
+      				name
+	  			}
+	  		}
+		`;
+
+		return this.apolloFetch({ query })
   			.then(function (response) {
-			    return response.data;
+			    return response.data.addTechno;
   			})
   			.catch(function (error) {
 			    console.log(error);

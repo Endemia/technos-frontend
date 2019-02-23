@@ -1,16 +1,29 @@
+import { createApolloFetch } from 'apollo-fetch'
 import axios from 'axios';
 
 class NotesApi {
 
 	constructor() {
-		this.url = 'http://localhost:8080';
+		const uri= 'http://localhost:8080/graphql';
+		this.url = uri;
+		this.apolloFetch = createApolloFetch({ uri });
 	}
 
 	getUserNotes() {
-		let url = this.url + '/notes';
-		return axios.get(url)
+		const query = `
+  			{
+  				findNotes(userId: "c14736e0-32d6-11e9-b210-d663bd873d93") {
+				    userId
+				    notes {
+				      	techno
+				      	note
+				   	}
+			    }
+  			}
+		`
+		return this.apolloFetch({ query })
   			.then(function (response) {
-			    return response.data;
+			    return response.data.findNotes;
   			})
   			.catch(function (error) {
 			    console.log(error);
@@ -19,8 +32,13 @@ class NotesApi {
   	}
 
 	updateUserNote(techno, note) {
-		let url = this.url + '/notes';
-		return axios.post(url, {'techno': techno, 'note': note})
+		const query = `
+			mutation {
+  				updateNote(userId: "c14736e0-32d6-11e9-b210-d663bd873d93", techno:"${techno}", note:${note})
+			}
+		`
+
+		return this.apolloFetch({ query })
   			.then(function (response) {
 			    return response.data;
   			})
@@ -31,10 +49,25 @@ class NotesApi {
 	}
 
 	getAllNotes() {
-		let url = this.url + '/notes/all';
-		return axios.get(url)
+		const query = `
+			{
+				allNotes {
+				    techno
+				    notes {
+				      	user {
+			        		userId
+			        		nom
+			        		prenom
+			      		}
+			      		note
+			    	}
+			    }
+			}
+		`
+
+		return this.apolloFetch({ query })
   			.then(function (response) {
-			    return response.data;
+			    return response.data.allNotes;
   			})
   			.catch(function (error) {
 			    console.log(error);
