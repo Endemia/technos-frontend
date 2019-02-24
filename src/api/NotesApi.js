@@ -1,13 +1,6 @@
-import { createApolloFetch } from 'apollo-fetch'
-import axios from 'axios';
+import apolloFetch from './ApolloFetch'
 
 class NotesApi {
-
-	constructor() {
-		const uri= 'http://localhost:8080/graphql';
-		this.url = uri;
-		this.apolloFetch = createApolloFetch({ uri });
-	}
 
 	getUserNotes() {
 		const query = `
@@ -21,7 +14,7 @@ class NotesApi {
 			    }
   			}
 		`
-		return this.apolloFetch({ query })
+		return apolloFetch({ query })
   			.then(function (response) {
 			    return response.data.findNotes;
   			})
@@ -38,7 +31,7 @@ class NotesApi {
 			}
 		`
 
-		return this.apolloFetch({ query })
+		return apolloFetch({ query })
   			.then(function (response) {
 			    return response.data;
   			})
@@ -65,7 +58,7 @@ class NotesApi {
 			}
 		`
 
-		return this.apolloFetch({ query })
+		return apolloFetch({ query })
   			.then(function (response) {
 			    return response.data.allNotes;
   			})

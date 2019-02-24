@@ -29,6 +29,9 @@ const styles = theme => ({
 	chip: {
 	    margin: theme.spacing.unit / 2,
 	},
+	element: {
+		backgroundColor: 'rgba(255, 255, 255, .3)',
+	},
 	details: {
 		backgroundColor: '#ececec',
 		borderTop: '1px #d0d0d0 solid',
@@ -39,7 +42,7 @@ const styles = theme => ({
 		fontFamily: "Roboto, Helvetica, Arial, sans-serif",
 	},
 	detailsInactive: {
-		backgroundColor: '#ffffff',
+		backgroundColor: 'rgba(255, 255, 255, .6)',
 		fontFamily: "Roboto, Helvetica, Arial, sans-serif",
 	}
 })
@@ -65,7 +68,7 @@ class TechnosList extends React.Component {
 			<div>
 				{this.props.notes.map(techno => {
 	      			return (
-	      				<ExpansionPanel key={techno.techno} expanded={this.state.expanded === techno.techno} onChange={this.handleChange(techno.techno)}>
+	      				<ExpansionPanel key={techno.techno} expanded={this.state.expanded === techno.techno} onChange={this.handleChange(techno.techno)} className={classes.element}>
 		        			<ExpansionPanelSummary expandIcon={<ExpandMoreIcon />} className={this.state.expanded === techno.techno ? classes.detailsActive : classes.detailsInactive}>
 		          				<div>
 		            				{techno.techno}

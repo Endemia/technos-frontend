@@ -1,33 +1,61 @@
 import React, { Component } from 'react';
 import './App.css';
+import theme from './theme';
+import { MuiThemeProvider } from '@material-ui/core/styles';
 import technosStore from './stores/TechnosStore';
 import searchStore from './stores/SearchStore';
 import notesStore from './stores/NotesStore';
 import { Provider } from 'mobx-react';
-import createBrowserHistory from 'history/createBrowserHistory';
+import appHistory from './history';
 import { RouterStore, syncHistoryWithStore } from 'mobx-react-router';
 import { Router, Route } from "react-router";
 
+import Login from './components/login/login.component';
 import NavBar from './components/navBar/navBar.component';
 import GraphContainer from './components/graph/graphContainer.component';
 import TechnosListContainer from './components/technosList/technosListContainer.component';
 
-const browserHistory = createBrowserHistory();
+const browserHistory = appHistory;
 const routingStore = new RouterStore();
 const history = syncHistoryWithStore(browserHistory, routingStore);
 
+
 class App extends Component {
+
+	state = {
+    	loggedIn: false,
+  	}
+
+	constructor(props) {
+        super(props);
+        this.onLogin = this.onLogin.bind(this);
+        if (sessionStorage.getItem('user')) {
+        	this.state.loggedIn = true ;
+        }
+    }
+
+    onLogin() {
+        this.setState({ loggedIn: true });
+    }
 
   	render() {
 	    return (
 	      	<Provider technosStore={technosStore} searchStore={searchStore} notesStore={notesStore} routing={routingStore}>
-	      		<Router history={history}>
-		        	<div className="App">
-			        	<NavBar></NavBar>
-			        	<Route path="/" exact component={GraphContainer} />
-			        	<Route path="/technos" component={TechnosListContainer} />
-			        </div>
-		     	</Router>
+	      		<MuiThemeProvider theme={theme}>
+		      		<Router history={history}>
+		      			<div>
+		      				<Route path="/login" component={Login} />
+			      			{this.state.loggedIn
+				        		? <div className="App">
+					        		<NavBar></NavBar>
+					        		<Route path="/" exact component={GraphContainer} />
+					        		<Route path="/technos" component={TechnosListContainer} />
+					        	  </div>
+					        	: <Login onLogin={this.onLogin}></Login>
+					        }
+				        </div>
+			     	</Router>
+			    </MuiThemeProvider>
 	      	</Provider>
 	    );
     }

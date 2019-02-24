@@ -16,6 +16,7 @@ const styles = theme => ({
         top: 0,
         left: 950,
         margin: theme.spacing.unit,
+        zIndex: 10
     }
 });
 
@@ -44,7 +45,7 @@ class Graph extends React.Component {
             el: ReactDOM.findDOMNode(this.refs.placeholder),
             width: 1024,
             height: 700,
-            background: { color: '#eeeeee'},
+            background: { color: 'rgba(255, 255, 255, 0.1)'},
             model: this.graph,
             restrictTranslate: true
         });
@@ -83,15 +84,15 @@ class Graph extends React.Component {
                 target: { id: destId },
                 attrs: {
                     line: {
-                        stroke: '#4b4a67',
+                        stroke: '#fb8803',
                         strokeWidth: 2,
                         sourceMarker: {
                         },
                         targetMarker: {
                             'type': 'circle',
                             'r': 0,
-                            'stroke': '#4b4a67',
-                            'fill': '#4b4a67',
+                            'stroke': '#fb8803',
+                            'fill': '#fb8803',
                         }
                     },
                 }
@@ -124,12 +125,16 @@ class Graph extends React.Component {
 
         this.clear();
         
-        this.props.technos.nodes.forEach((node) => {
-            this.addNode(node);
-        });
-        this.props.technos.links.forEach((link) => {
-            this.addLink(link);
-        });
+        if (this.props.technos.nodes) {
+            this.props.technos.nodes.forEach((node) => {
+                this.addNode(node);
+            });
+        }
+        if (this.props.technos.links) {
+            this.props.technos.links.forEach((link) => {
+                this.addLink(link);
+            });
+        }
 
         joint.layout.DirectedGraph.layout(this.graph, { marginX: 50, marginY: 50 });
 

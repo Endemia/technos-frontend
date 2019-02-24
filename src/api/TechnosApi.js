@@ -1,12 +1,7 @@
-import { createApolloFetch } from 'apollo-fetch'
+import apolloFetch from './ApolloFetch'
 import config from '../conf/config.json';
 
 class TechnosApi {
-
-	constructor() {
-		const uri= 'http://localhost:8080/graphql';
-		this.apolloFetch = createApolloFetch({ uri });
-	}
 
 	getTechnos(name, exactMatch, depth) {
 		name = name || "";
@@ -24,7 +19,7 @@ class TechnosApi {
   			}
 		`
 
-		return this.apolloFetch({ query })
+		return apolloFetch({ query })
   			.then(function (response) {
 			    return response.data.findTechnos;
   			})
@@ -43,7 +38,7 @@ class TechnosApi {
 	  		}
 		`;
 
-		return this.apolloFetch({ query })
+		return apolloFetch({ query })
   			.then(function (response) {
 			    return response.data.addTechno;
   			})

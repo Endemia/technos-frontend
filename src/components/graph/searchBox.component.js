@@ -14,6 +14,7 @@ const styles = {
     display: 'flex',
     alignItems: 'center',
     width: 1015,
+    backgroundColor: 'rgba(208, 246, 255, 0.6)'
   },
   input: {
     marginLeft: 8,

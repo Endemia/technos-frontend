@@ -9,16 +9,16 @@ class NotesStore {
 
 	@action.bound
 	getUserNotes() {
-		this.notesApi.getUserNotes().then(res => {
-			this.userNotes.replace(res.notes);
-		});
+		this.notesApi.getUserNotes().then(res => 
+			res ? this.userNotes.replace(res.notes) : []
+		);
 	}
 
 	@action.bound
 	getAllNotes() {
-		this.notesApi.getAllNotes().then(res => {
-			this.allNotes.replace(res);
-		})
+		this.notesApi.getAllNotes().then(res =>
+			res ? this.allNotes.replace(res) : []
+		);
 	}
 
 	@action.bound
