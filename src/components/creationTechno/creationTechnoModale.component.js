@@ -31,18 +31,16 @@ class CreationTechnoModale extends React.Component {
 
 	constructor(props) {
         super(props);
-        this.handleCreate = this.handleCreate.bind(this);
-        this.handleChangeCreateName = this.handleChangeCreateName.bind(this);
         this.updateExistingListDebounced = debounce(300, this.updateExistingList);
     }
 
-    handleCreate() {
+    handleCreate = () => {
         new TechnosApi().createTechno(this.state.createName);
     }
-    handleChangeCreateName(e) {
+    handleChangeCreateName = (e) => {
         this.updateExistingListDebounced(e.target.value);
     }
-    updateExistingList(query) {
+    updateExistingList = (query) => {
         if (query) {
             this.setState({createName: query});
             this.props.searchStore.getExistingTechnos(query);
@@ -53,7 +51,7 @@ class CreationTechnoModale extends React.Component {
         }
     }
 
-	goToTechno(technoName) {
+	goToTechno = (technoName) => {
         this.props.technosStore.getTechnos(technoName, true);
         this.props.onClose();
     }

@@ -11,6 +11,7 @@ import { RouterStore, syncHistoryWithStore } from 'mobx-react-router';
 import { Router, Route } from "react-router";
 
 import Login from './components/login/login.component';
+import Register from './components/register/register.component';
 import NavBar from './components/navBar/navBar.component';
 import GraphContainer from './components/graph/graphContainer.component';
 import TechnosListContainer from './components/technosList/technosListContainer.component';
@@ -18,7 +19,6 @@ import TechnosListContainer from './components/technosList/technosListContainer.
 const browserHistory = appHistory;
 const routingStore = new RouterStore();
 const history = syncHistoryWithStore(browserHistory, routingStore);
-
 
 class App extends Component {
 
@@ -51,7 +51,10 @@ class App extends Component {
 					        		<Route path="/" exact component={GraphContainer} />
 					        		<Route path="/technos" component={TechnosListContainer} />
 					        	  </div>
-					        	: <Login onLogin={this.onLogin}></Login>
+					        	: <div>
+					        		<Route path="/" exact component={() => <Login onLogin={this.onLogin}></Login>} />
+					        	  	<Route path="/register" component={Register} />
+					        	  </div>
 					        }
 				        </div>
 			     	</Router>

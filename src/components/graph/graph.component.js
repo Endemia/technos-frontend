@@ -34,9 +34,6 @@ class Graph extends React.Component {
         this.nodeMap = {};
 
         joint.layout.DirectedGraph.layout(this.graph);
-        this.onUpdateNote = this.onUpdateNote.bind(this);
-        this.handleClickOpenCreationModale = this.handleClickOpenCreationModale.bind(this);
-        this.handleCloseCreationModale = this.handleCloseCreationModale.bind(this);
     }
 
     componentDidMount() {
@@ -52,7 +49,7 @@ class Graph extends React.Component {
 
     }
 
-	addNode(tech) {
+	addNode = (tech) => {
 
         let focus = false;
         const searchQuery = this.props.searchStore.query;
@@ -69,11 +66,11 @@ class Graph extends React.Component {
         this.nodeMap[tech]=techRect.id;
     }
 
-    onUpdateNote(techno, note) {
+    onUpdateNote = (techno, note) => {
         this.props.notesStore.updateUserNote(techno, note);
     }
 
-    addLink(link) {
+    addLink = (link) => {
         if (link.from && link.to) {
             const sourceId = this.nodeMap[link.from];
 
@@ -102,7 +99,7 @@ class Graph extends React.Component {
         }
     }
 
-    clear() {
+    clear = () => {
         Object.keys(this.nodeMap).forEach(key => {
             const cell = this.graph.getCell(this.nodeMap[key]);
             if (cell) {
@@ -111,10 +108,10 @@ class Graph extends React.Component {
         });
         this.nodeMap = {};
     }
-    handleClickOpenCreationModale() {
+    handleClickOpenCreationModale = () => {
         this.setState({ open: true });
     }
-    handleCloseCreationModale() {
+    handleCloseCreationModale = () => {
         this.setState({ open: false, createName: "" });
         this.props.searchStore.clearExistingTechnos();
     }

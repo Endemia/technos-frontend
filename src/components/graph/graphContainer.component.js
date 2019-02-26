@@ -8,11 +8,11 @@ import SearchBox from './searchBox.component';
 @observer
 class GraphContainer extends React.Component {
 
-    getNodes() {
+    getNodes= () => {
         this.props.technosStore.getTechnos();
     }
 
-    getUserNotes() {
+    getUserNotes= () => {
         this.props.notesStore.getUserNotes();
     }
 

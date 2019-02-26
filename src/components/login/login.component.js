@@ -1,5 +1,6 @@
 import React from 'react';
 import { withStyles } from '@material-ui/core/styles';
+import { observer, inject } from 'mobx-react';
 
 import AuthenticationApi from '../../api/AuthenticationApi';
 
@@ -47,7 +48,7 @@ const styles = theme => ({
 		display: "flex",
 		color: "#ffffff"
 	},
-	button: {
+	buttons: {
 		display: "flex",
 		justifyContent: "space-between"
 	},
@@ -56,6 +57,8 @@ const styles = theme => ({
 	}
 });
 
+@inject("routing")
+@observer
 class Login extends React.Component {
 
 	state = {
@@ -64,22 +67,16 @@ class Login extends React.Component {
 		error: ''
 	};
 
-	constructor(props) {
-        super(props);
-        this.login = this.login.bind(this);
-        this.handleChangeLogin = this.handleChangeLogin.bind(this);
-        this.handleChangePassword = this.handleChangePassword.bind(this);
-    }
-
-    handleChangeLogin(event) {
-	    this.setState({login: event.target.value});
+    handleChangeLogin = event => {
+	    this.setState({login: event.target.value, error: null});
   	}
-  	handleChangePassword(event) {
-	    this.setState({password: event.target.value});
+  	handleChangePassword = event => {
+	    this.setState({password: event.target.value, error: null});
   	}
 
 
-	login() {
+	login = e => {
+		e.preventDefault();
 		this.setState({error: null});
         new AuthenticationApi().login(this.state.login, this.state.password).then((token) => {
         	if (token) {
@@ -94,6 +91,7 @@ class Login extends React.Component {
 
 	render() {
 		const { classes } = this.props;
+		const { push } = this.props.routing;
 
 		return (
 			<div className={classes.container}>
@@ -105,18 +103,20 @@ class Login extends React.Component {
 					{this.state.error &&
 						<Typography variant="subtitle2" gutterBottom className={classes.error}>{this.state.error.message}</Typography>
 					}
-			        <Paper className={classes.root} elevation={1}>
-			        	<InputBase className={classes.input} placeholder="Login" onChange={this.handleChangeLogin}/>
-			        </Paper>
-			        <Paper className={classes.root} elevation={1}>
-			        	<InputBase className={classes.input} placeholder="Password" onChange={this.handleChangePassword}/>
-			        </Paper>
-			        <div className={classes.button}>
-			        	<div></div>
-			        	<Button variant="contained" color="secondary" onClick={this.login}>
-			        		Connexion
-			        	</Button>
-			        </div>
+			        <form onSubmit={this.login}>
+				        <Paper className={classes.root} elevation={1}>
+				        	<InputBase className={classes.input} placeholder="Login" onChange={this.handleChangeLogin}/>
+				        </Paper>
+				        <Paper className={classes.root} elevation={1}>
+				        	<InputBase type="password" className={classes.input} placeholder="Password" onChange={this.handleChangePassword}/>
+				        </Paper>
+				        <div className={classes.buttons}>
+				        	<Button variant="outlined" onClick={() => push('/register')}>Register</Button>
+				        	<Button variant="contained" color="secondary" type="submit">
+				        		Connexion
+				        	</Button>
+				        </div>
+				    </form>
 				</Paper>
 			</div>
 		)

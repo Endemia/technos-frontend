@@ -37,15 +37,14 @@ class SearchBox extends Component {
 	constructor(props) {
         super(props);
         this.updateStoreDebounced = debounce(500, this.updateStore);
-        this.changeQuery = this.changeQuery.bind(this);
 	}
 
-	changeQuery(e) {
+	changeQuery = (e) => {
 		const query = e.target.value;
       	this.updateStoreDebounced(query);
 	}
 
-	updateStore(query) {
+	updateStore = (query) => {
 		this.props.searchStore.setQuery(query);
 		this.props.technosStore.getTechnos(query);
 	}

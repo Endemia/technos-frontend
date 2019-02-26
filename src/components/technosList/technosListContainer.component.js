@@ -7,7 +7,7 @@ import TechnosList from './technosList.component';
 @observer
 class TechnosListContainer extends React.Component {
 
-	getAllNotes() {
+	getAllNotes = () => {
         this.props.notesStore.getAllNotes();
     }
 

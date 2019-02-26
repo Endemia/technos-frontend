@@ -21,6 +21,43 @@ class AuthenticationApi {
   				throw error;
 	  	    });
 	}
+
+	isLoginAvailable(login) {
+		const query = `
+			mutation {
+  				isLoginAvailable(login: "${login}")
+			}
+		`
+		return apolloFetch({ query })
+  			.then(function (response) {
+		    	return response.data.isLoginAvailable;
+  			})
+  			.catch(function (error) {
+			    console.log(error);
+  				throw error;
+	  	    });
+
+	}
+
+	register(login, password, nom, prenom, email) {
+		const query = `
+			mutation {
+  				register(login: "${login}", password:"${password}", nom:"${nom}", prenom:"${prenom}", email:"${email}")
+			}
+		`
+		return apolloFetch({ query })
+  			.then(function (response) {
+  				if (response.errors) {
+  					throw new Error(response.errors[0].message);
+  				} else {
+		    		return response.data.register;
+		    	}
+  			})
+  			.catch(function (error) {
+			    console.log(error);
+  				throw error;
+	  	    });
+	}
 }
 
 export default AuthenticationApi;

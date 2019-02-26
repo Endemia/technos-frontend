@@ -1,3 +1,5 @@
 {
-	"treeDepth": 2
+	"treeDepth": 2,
+	"loginMinLength": 2,
+	"passwordMinLength": 2
 }
