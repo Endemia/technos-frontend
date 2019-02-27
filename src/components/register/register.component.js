@@ -97,6 +97,7 @@ class Register extends React.Component {
 	    prenomOk: "empty",
 	    emailOk: "empty",
 	    registerDisabled: true,
+	    confirmRegistration: false,
 	};
 
 	loginMaxLength = config.loginMinLength;
@@ -205,9 +206,14 @@ class Register extends React.Component {
 
   	register = () => {
   		if (this.checkRegisterEnable()) {
+  			this.setState({ registerDisabled: true });
 			new AuthenticationApi().register(this.state.login, this.state.password, this.state.nom, this.state.prenom, this.state.email)
+			.then(res => {
+				this.setState({confirmRegistration: true})
+			})
 			.catch(error => {
-			});
+				this.setState({ registerDisabled: false });
+			})
 		}
   	}
 
@@ -222,98 +228,110 @@ class Register extends React.Component {
 						<PersonIcon className={classes.icon} />
 						<Typography variant="h4" gutterBottom className={classes.title}>Register</Typography>
 					</div>
-						
-			        <Typography variant="caption">
-			          	Authentification
-			        </Typography>
-					<Divider className={classes.divider}/>
+					
+					{this.state.confirmRegistration &&
+						<div>
+							<Typography variant="h6">
+								Merci de vous être inscrit.<br></br>Un e-mail contenant les instructions pour activer votre compte vous a été envoyé ({this.state.email}).
+							</Typography>
+						</div>
+					}
+
+					{!this.state.confirmRegistration &&
+						<div>
+					        <Typography variant="caption">
+					          	Authentification
+					        </Typography>
+							<Divider className={classes.divider}/>
 
 
-					<Grid container spacing={16}>
-						<Grid item xs={6}>
-					        <Paper className={classes.inputPaper} elevation={1}>
-					        	<InputBase className={classes.input} placeholder="Login*" onChange={this.handleChange('login')}
-					        		endAdornment={
-					        			<InputAdornment position="end">
-					        				{this.state.loginOk === "checking" && <CircularProgress className={classes.progress} size={20} />}
-					        				{this.state.loginOk === "ok" && <CheckCircle className={classes.ok} />}
-					        				{(this.state.loginOk === "notOk" || this.state.loginOk === "tooShort") && <Cancel className={classes.error} />}
-					        			</InputAdornment>}
-					        	/>
-					        </Paper>
-					    </Grid>
-					    <Grid item xs={6} className={classes.verticalAlign}>
-					    	{this.state.loginOk === "notOk" && <Typography color="secondary" variant="caption">Non disponible.</Typography>}
-					    	{this.state.loginOk === "tooShort" && <Typography color="secondary" variant="caption">{`Le login doit contenir au moins ${config.loginMinLength} caractères`}</Typography>}
-					    </Grid>
-					    <Grid item xs={6}>
-					        <Paper className={classes.inputPaper} elevation={1}>
-					        	<InputBase className={classes.input} placeholder="Password*" onChange={this.handleChange('password')} />
-					        </Paper>
-					    </Grid>
-					    <Grid item xs={6}>
-					        <Paper className={classes.inputPaper} elevation={1}>
-					        	<InputBase className={classes.input} placeholder="Confirm password*" onChange={this.handleChange('confirmPassword')}
-					        		endAdornment={
-					        			<InputAdornment position="end">
-					        				{this.state.passwordOk === "ok" && <CheckCircle className={classes.ok} />}
-					        				{this.state.passwordOk === "notOk" && <Cancel className={classes.error} />}
-				        				</InputAdornment>}
-					        	/>
-					        </Paper>
-					    </Grid>
-					</Grid>
+							<Grid container spacing={16}>
+								<Grid item xs={6}>
+							        <Paper className={classes.inputPaper} elevation={1}>
+							        	<InputBase className={classes.input} placeholder="Login*" onChange={this.handleChange('login')}
+							        		endAdornment={
+							        			<InputAdornment position="end">
+							        				{this.state.loginOk === "checking" && <CircularProgress className={classes.progress} size={20} />}
+							        				{this.state.loginOk === "ok" && <CheckCircle className={classes.ok} />}
+							        				{(this.state.loginOk === "notOk" || this.state.loginOk === "tooShort") && <Cancel className={classes.error} />}
+							        			</InputAdornment>}
+							        	/>
+							        </Paper>
+							    </Grid>
+							    <Grid item xs={6} className={classes.verticalAlign}>
+							    	{this.state.loginOk === "notOk" && <Typography color="secondary" variant="caption">Non disponible.</Typography>}
+							    	{this.state.loginOk === "tooShort" && <Typography color="secondary" variant="caption">{`Le login doit contenir au moins ${config.loginMinLength} caractères`}</Typography>}
+							    </Grid>
+							    <Grid item xs={6}>
+							        <Paper className={classes.inputPaper} elevation={1}>
+							        	<InputBase className={classes.input} placeholder="Password*" onChange={this.handleChange('password')} />
+							        </Paper>
+							    </Grid>
+							    <Grid item xs={6}>
+							        <Paper className={classes.inputPaper} elevation={1}>
+							        	<InputBase className={classes.input} placeholder="Confirm password*" onChange={this.handleChange('confirmPassword')}
+							        		endAdornment={
+							        			<InputAdornment position="end">
+							        				{this.state.passwordOk === "ok" && <CheckCircle className={classes.ok} />}
+							        				{this.state.passwordOk === "notOk" && <Cancel className={classes.error} />}
+						        				</InputAdornment>}
+							        	/>
+							        </Paper>
+							    </Grid>
+							</Grid>
 
-					<div className={classes.verticalSpacing}></div>
-					<Typography className={classes.dividerFullWidth} color="textSecondary" variant="caption">
-			          	informations
-			        </Typography>
-					<Divider className={classes.divider}/>
+							<div className={classes.verticalSpacing}></div>
+							<Typography className={classes.dividerFullWidth} color="textSecondary" variant="caption">
+					          	informations
+					        </Typography>
+							<Divider className={classes.divider}/>
 
-					<Grid container spacing={16}>
-					    <Grid item xs={6}>
-					        <Paper className={classes.inputPaper} elevation={1}>
-					        	<InputBase className={classes.input} placeholder="Nom*" onChange={this.handleChange('nom')}
-									endAdornment={
-					        			<InputAdornment position="end">
-					        				{this.state.nomOk === "ok" && <CheckCircle className={classes.ok} />}
-					        				{this.state.nomOk === "notOk" && <Cancel className={classes.error} />}
-					        			</InputAdornment>}
-					        	/>
-					        </Paper>
-					    </Grid>
-					    <Grid item xs={6}>
-					        <Paper className={classes.inputPaper} elevation={1}>
-					        	<InputBase className={classes.input} placeholder="Prenom*" onChange={this.handleChange('prenom')}
-					        		endAdornment={
-					        			<InputAdornment position="end">
-					        				{this.state.prenomOk === "ok" && <CheckCircle className={classes.ok} />}
-					        				{this.state.prenomOk === "notOk" && <Cancel className={classes.error} />}
-					        			</InputAdornment>}
-					        	/>
-					        </Paper>
-					    </Grid>
-					    <Grid item xs={6}>
-					        <Paper className={classes.inputPaper} elevation={1}>
-					        	<InputBase className={classes.input} placeholder="Email*" onChange={this.handleChange('email')}
-					        		endAdornment={
-				        				<InputAdornment position="end">
-					        				{this.state.emailOk === "ok" && <CheckCircle className={classes.ok} />}
-					        				{this.state.emailOk === "notOk" && <Cancel className={classes.error} />}
-					        			</InputAdornment>}
-					        	/>
-					        </Paper>
-					    </Grid>
-					    <Grid item xs={6} className={classes.verticalAlign}>
-					    	{this.state.emailOk === "notOk" && <Typography color="secondary" variant="caption">Doit être une adresse mail CGI.</Typography>}
-					    </Grid>
-					</Grid>
-					<div className={classes.buttons}>
-			        	<div></div>
-			        	<Button variant="contained" color="secondary" disabled={this.state.registerDisabled} onClick={this.registerDebounced}>
-			        		Register
-			        	</Button>
-			        </div>
+							<Grid container spacing={16}>
+							    <Grid item xs={6}>
+							        <Paper className={classes.inputPaper} elevation={1}>
+							        	<InputBase className={classes.input} placeholder="Nom*" onChange={this.handleChange('nom')}
+											endAdornment={
+							        			<InputAdornment position="end">
+							        				{this.state.nomOk === "ok" && <CheckCircle className={classes.ok} />}
+							        				{this.state.nomOk === "notOk" && <Cancel className={classes.error} />}
+							        			</InputAdornment>}
+							        	/>
+							        </Paper>
+							    </Grid>
+							    <Grid item xs={6}>
+							        <Paper className={classes.inputPaper} elevation={1}>
+							        	<InputBase className={classes.input} placeholder="Prenom*" onChange={this.handleChange('prenom')}
+							        		endAdornment={
+							        			<InputAdornment position="end">
+							        				{this.state.prenomOk === "ok" && <CheckCircle className={classes.ok} />}
+							        				{this.state.prenomOk === "notOk" && <Cancel className={classes.error} />}
+							        			</InputAdornment>}
+							        	/>
+							        </Paper>
+							    </Grid>
+							    <Grid item xs={6}>
+							        <Paper className={classes.inputPaper} elevation={1}>
+							        	<InputBase className={classes.input} placeholder="Email*" onChange={this.handleChange('email')}
+							        		endAdornment={
+						        				<InputAdornment position="end">
+							        				{this.state.emailOk === "ok" && <CheckCircle className={classes.ok} />}
+							        				{this.state.emailOk === "notOk" && <Cancel className={classes.error} />}
+							        			</InputAdornment>}
+							        	/>
+							        </Paper>
+							    </Grid>
+							    <Grid item xs={6} className={classes.verticalAlign}>
+							    	{this.state.emailOk === "notOk" && <Typography color="secondary" variant="caption">Doit être une adresse mail CGI.</Typography>}
+							    </Grid>
+							</Grid>
+							<div className={classes.buttons}>
+					        	<div></div>
+					        	<Button variant="contained" color="secondary" disabled={this.state.registerDisabled} onClick={this.registerDebounced}>
+					        		Register
+					        	</Button>
+					        </div>
+					    </div>
+				    }
 				</Paper>
 			</div>
 		)
