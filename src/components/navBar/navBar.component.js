@@ -10,25 +10,30 @@ import MenuItem from '@material-ui/core/MenuItem';
 import { observer, inject } from 'mobx-react';
 
 const styles = {
-  root: {
-    flexGrow: 1,
-  },
-  grow: {
-    flexGrow: 1,
-  },
-  menuButton: {
-    marginLeft: -12,
-    marginRight: 20,
-  },
+    root: {
+        flexGrow: 1,
+    },
+    grow: {
+        flexGrow: 1,
+    },
+    menuButton: {
+        marginLeft: -12,
+        marginRight: 20,
+    },
 };
 
 @inject("routing")
 @observer
 class NavBar extends Component {
 
+    logout = () => {
+        sessionStorage.removeItem("user");
+        this.props.onLogout();
+    }
+
   	render() {
   		const { classes } = this.props;
-      const { push } = this.props.routing;
+        const { push } = this.props.routing;
 
   		return (
 	        <AppBar position="static">
@@ -39,12 +44,12 @@ class NavBar extends Component {
 	          		<Typography variant="h6" color="inherit" className={classes.grow}>
 	            		News
 	          		</Typography>
-                <MenuItem>
-                  <Button variant="contained" color="secondary" onClick={() => push('/technos')}>Change url</Button>
-                </MenuItem>
-                <MenuItem>
-	          		  <Button variant="contained" color="secondary">Login</Button>
-                </MenuItem>
+                    <MenuItem>
+                        <Button variant="contained" color="secondary" onClick={() => push('/technos')}>Change url</Button>
+                    </MenuItem>
+                    <MenuItem>
+    	          		<Button variant="contained" color="secondary" onClick={this.logout}>Logout</Button>
+                    </MenuItem>
 	        	</Toolbar>
 	      	</AppBar>
 	    );

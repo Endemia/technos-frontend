@@ -31,8 +31,6 @@
 .graph {
     position: absolute;
     top: 86px;
-    left: 0;
-    right: 0;
 }
 .search-already-exists {
     background-color: #efefef;

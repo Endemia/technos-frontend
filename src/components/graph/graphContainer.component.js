@@ -1,8 +1,16 @@
 import React from 'react';
 import { observer, inject } from 'mobx-react';
+import { withStyles } from '@material-ui/core/styles';
 
 import Graph from './graph.component';
 import SearchBox from './searchBox.component';
+import UserTechnosList from '../technosList/userTechnosList.component';
+
+const styles = {
+	container: {
+		display: "flex",
+	}
+};
 
 @inject("technosStore", "notesStore")
 @observer
@@ -21,13 +29,20 @@ class GraphContainer extends React.Component {
 		this.getNodes();
 		this.getUserNotes();
 
+		const { classes } = this.props;
+
 		return (
-			<div className="graphContainer">
-				<SearchBox></SearchBox>
-				<Graph technos={this.props.technosStore.technos} notes={this.props.notesStore.userNotes}></Graph>
+			<div className={classes.container}>
+				<div>
+					<SearchBox></SearchBox>
+					<Graph technos={this.props.technosStore.technos} notes={this.props.notesStore.userNotes}></Graph>
+				</div>
+				<div>
+					<UserTechnosList></UserTechnosList>
+				</div>
 			</div>
 		)
 	}
 }
 
-export default GraphContainer;
+export default withStyles(styles)(GraphContainer);

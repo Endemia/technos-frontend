@@ -29,14 +29,17 @@ class App extends Component {
 
 	constructor(props) {
         super(props);
-        this.onLogin = this.onLogin.bind(this);
         if (sessionStorage.getItem('user')) {
         	this.state.loggedIn = true ;
         }
     }
 
-    onLogin() {
+    onLogin = () => {
         this.setState({ loggedIn: true });
+    }
+
+    onLogout = () => {
+    	this.setState({ loggedIn: false });
     }
 
   	render() {
@@ -48,7 +51,7 @@ class App extends Component {
 		      				<Route path="/login" component={Login} />
 			      			{this.state.loggedIn
 				        		? <div className="App">
-					        		<NavBar></NavBar>
+					        		<NavBar onLogout={this.onLogout}></NavBar>
 					        		<Route path="/" exact component={GraphContainer} />
 					        		<Route path="/technos" component={TechnosListContainer} />
 					        	  </div>
