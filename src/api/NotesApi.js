@@ -5,7 +5,7 @@ class NotesApi {
 	getUserNotes() {
 		const query = `
   			{
-  				findNotes(userId: "c14736e0-32d6-11e9-b210-d663bd873d93") {
+  				findNotes {
 				    userId
 				    notes {
 				      	techno
@@ -27,7 +27,7 @@ class NotesApi {
 	updateUserNote(techno, note) {
 		const query = `
 			mutation {
-  				updateNote(userId: "c14736e0-32d6-11e9-b210-d663bd873d93", techno:"${techno}", note:${note})
+  				updateNote(techno:"${techno}", note:${note})
 			}
 		`
 

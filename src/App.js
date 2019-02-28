@@ -12,6 +12,7 @@ import { Router, Route } from "react-router";
 
 import Login from './components/login/login.component';
 import Register from './components/register/register.component';
+import Activate from './components/register/activate.component';
 import NavBar from './components/navBar/navBar.component';
 import GraphContainer from './components/graph/graphContainer.component';
 import TechnosListContainer from './components/technosList/technosListContainer.component';
@@ -54,6 +55,7 @@ class App extends Component {
 					        	: <div>
 					        		<Route path="/" exact component={() => <Login onLogin={this.onLogin}></Login>} />
 					        	  	<Route path="/register" component={Register} />
+					        	  	<Route path="/activate/login/:login/key/:registerKey" component={Activate} />
 					        	  </div>
 					        }
 				        </div>

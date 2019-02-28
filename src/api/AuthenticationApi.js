@@ -24,7 +24,7 @@ class AuthenticationApi {
 
 	isLoginAvailable(login) {
 		const query = `
-			mutation {
+			{
   				isLoginAvailable(login: "${login}")
 			}
 		`
@@ -36,7 +36,6 @@ class AuthenticationApi {
 			    console.log(error);
   				throw error;
 	  	    });
-
 	}
 
 	register(login, password, nom, prenom, email) {
@@ -52,6 +51,23 @@ class AuthenticationApi {
   				} else {
 		    		return response.data.register;
 		    	}
+  			})
+  			.catch(function (error) {
+			    console.log(error);
+  				throw error;
+	  	    });
+	}
+
+	activate(login, registerKey) {
+		const query = `
+			mutation {
+				activate(login: "${login}", registerKey:"${registerKey}")
+			}
+		`
+
+		return apolloFetch({ query })
+  			.then(function (response) {
+		    	return response.data.activate;
   			})
   			.catch(function (error) {
 			    console.log(error);
