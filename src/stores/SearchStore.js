@@ -1,10 +1,12 @@
 import { observable, action, runInAction } from "mobx";
 import TechnosApi from '../api/TechnosApi';
+import { deburr } from 'lodash';
 
 class SearchStore {
 	@observable query="";
-	@observable creationDisabled=true;
 	@observable existingTechnos=[];
+	@observable existingTechnosExactMatch = false;
+	@observable existingTechnosLink=[];
 
 	technosApi = new TechnosApi();
 
@@ -14,25 +16,37 @@ class SearchStore {
 
 	@action.bound
 	getExistingTechnos(name) {
-		this.technosApi.getTechnos(name, false, 0).then(res => {
+		this.technosApi.getTechnos(deburr(name), false, 0).then(res => {
 			runInAction(() => {
-				this.existingTechnos.replace(this.sortTechnosByName(res));
-				const exactMatchExists = res.filter(techno => {
-					return techno.name.toLowerCase() === name.toLowerCase();
-				});
-				if (exactMatchExists.length > 0) {
-					this.creationDisabled = true;
+				const exactMatch = res.filter(t => deburr(t.name.toUpperCase()) === deburr(name.toUpperCase()));
+				if (exactMatch.length > 0) {
+					this.existingTechnosExactMatch = true;
 				} else {
-					this.creationDisabled = false;
+					this.existingTechnosExactMatch = false;
 				}
+				this.existingTechnos.replace(this.sortTechnosByName(res));
 			})
+		});
+	}
+
+	@action.bound
+	getExistingTechnosLink(name) {
+		return this.technosApi.getTechnos(deburr(name), false, 0).then(res => {
+			runInAction(() => {
+				this.existingTechnosLink.replace(this.sortTechnosByName(res));
+			})
+			return res;
 		});
 	}
 
 	@action.bound
 	clearExistingTechnos() {
 		this.existingTechnos.clear();
-		this.searchingExistingTechnos = false;
+	}
+
+	@action.bound
+	clearExistingTechnosLink() {
+		this.existingTechnosLink.clear();
 	}
 
 	sortTechnosByName(technos) {

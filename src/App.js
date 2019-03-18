@@ -9,6 +9,7 @@ import { Provider } from 'mobx-react';
 import appHistory from './history';
 import { RouterStore, syncHistoryWithStore } from 'mobx-react-router';
 import { Router, Route } from "react-router";
+import { SnackbarProvider } from 'notistack';
 
 import Login from './components/login/login.component';
 import Register from './components/register/register.component';
@@ -47,21 +48,24 @@ class App extends Component {
 	      	<Provider technosStore={technosStore} searchStore={searchStore} notesStore={notesStore} routing={routingStore}>
 	      		<MuiThemeProvider theme={theme}>
 		      		<Router history={history}>
-		      			<div>
-		      				<Route path="/login" component={Login} />
-			      			{this.state.loggedIn
-				        		? <div className="App">
-					        		<NavBar onLogout={this.onLogout}></NavBar>
-					        		<Route path="/" exact component={GraphContainer} />
-					        		<Route path="/technos" component={TechnosListContainer} />
-					        	  </div>
-					        	: <div>
-					        		<Route path="/" exact component={() => <Login onLogin={this.onLogin}></Login>} />
-					        	  	<Route path="/register" component={Register} />
-					        	  	<Route path="/activate/login/:login/key/:registerKey" component={Activate} />
-					        	  </div>
-					        }
-				        </div>
+		      			<SnackbarProvider maxSnack={3}>
+			      			<div>
+			      				<Route path="/login" component={Login} />
+				      			{this.state.loggedIn
+					        		? <div className="App">
+						        		<NavBar onLogout={this.onLogout}></NavBar>
+						        		<Route path="/" exact component={GraphContainer} />
+						        		<Route path="/technos" component={TechnosListContainer} />
+						        	  </div>
+						        	: <div>
+						        		<Route path="/" exact component={() => <Login onLogin={this.onLogin}></Login>} />
+						        	  	<Route path="/register" component={Register} />
+						        	  	<Route path="/activate/login/:login/key/:registerKey" component={Activate} />
+						        	  </div>
+						        }
+						    <div className="bg-image"></div>
+					        </div>
+					    </SnackbarProvider>
 			     	</Router>
 			    </MuiThemeProvider>
 	      	</Provider>

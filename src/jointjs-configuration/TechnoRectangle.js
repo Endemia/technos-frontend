@@ -16,15 +16,15 @@ import $ from 'jquery';
 
         template: [
             '<div class="html-element">',
-            '<label></label>',
-            '<div class="stars_container">',
-            '<div class="stars" >',
-            '<div class="star1" >',
-            '<div class="star2" >',
-            '</div>',
-            '</div>',
-            '</div>',
-            '</div>',
+                '<label></label>',
+                '<div class="stars_container">',
+                    '<div class="stars" >',
+                        '<div class="star1" >',
+                            '<div class="star2" >',
+                            '</div>',
+                        '</div>',
+                    '</div>',
+                '</div>',
             '</div>'
         ].join(''),
 

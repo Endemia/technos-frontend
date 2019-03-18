@@ -6,12 +6,16 @@ class TechnosApi {
 	getTechnos(name, exactMatch, depth) {
 		name = name || "";
 		exactMatch = exactMatch || false;
-		depth = depth || config.treeDepth;
+		
+		if (depth === undefined) {
+			depth = config.treeDepth;
+		}
 		
 		const query = `
   			{
   				findTechnos(name: "${name}", depth: ${depth}, exactMatch: ${exactMatch}) {
     				name
+    				niveau
     				children {
 	      				name
     				}
@@ -29,10 +33,10 @@ class TechnosApi {
 	  	    });
 	}
 
-	createTechno(name) {
+	createTechno(name, links, linkType) {
 		const query = `
 	  		mutation {
-	  			addTechno(name: "${name}") {
+	  			addTechno(name: "${name}", links: [${links.map(l=> "\"" + l + "\"").join(',')}], linkType: "${linkType}") {
       				name
 	  			}
 	  		}

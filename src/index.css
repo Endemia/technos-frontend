@@ -22,6 +22,16 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+.bg-image {
+  background:url(/img/bg.png) 0 0 no-repeat;
+  opacity:0.2;
+  width: 480px;
+  height: 324px;
+  position: absolute;
+  bottom: 0;
+  right: 0;
+}
+
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;

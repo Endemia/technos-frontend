@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom';
 import { observer, inject } from 'mobx-react';
 import joint from 'jointjs/index';
 import TechnoRectangle from '../../jointjs-configuration/TechnoRectangle';
+import $ from 'jquery';
 
 import { withStyles } from '@material-ui/core/styles';
 import Fab from '@material-ui/core/Fab';
@@ -13,10 +14,25 @@ import CreationTechnoModale from '../creationTechno/creationTechnoModale.compone
 const styles = theme => ({
     fab: {
         position: 'absolute',
-        top: 0,
-        left: 950,
+        top: 86,
+        left: 930,
         margin: theme.spacing.unit,
         zIndex: 10
+    },
+    playground: {
+        height: '100%'
+    },
+    emptySearch: {
+        position: 'absolute',
+        top:'50%',
+        left: '40%',
+        backgroundColor: 'rgba(255, 255, 255, .1)',
+        padding: 10,
+        fontFamily: ["Roboto", "Helvetica", "Arial", "sans-serif"],
+        color: 'rgba(255, 255, 255, .2)',
+        display: 'none',
+        borderRadius: 20,
+        width: 200
     }
 });
 
@@ -33,20 +49,27 @@ class Graph extends React.Component {
         this.graph = new joint.dia.Graph();
         this.nodeMap = {};
 
-        joint.layout.DirectedGraph.layout(this.graph);
     }
 
-    componentDidMount() {
-
+    componentDidUpdate = () => {
+        this.paper.setDimensions(1024, $("#graph")[0].scrollHeight);
+    }
+    componentDidMount = () => {
         this.paper = new joint.dia.Paper({
             el: ReactDOM.findDOMNode(this.refs.placeholder),
             width: 1024,
-            height: 700,
-            background: { color: 'rgba(255, 255, 255, 0.1)'},
+            height: $("#graph").scrollHeight,
             model: this.graph,
-            restrictTranslate: true
+            //restrictTranslate: true
         });
 
+         if (!this.props.technos.nodes || this.props.technos.nodes.length === 0) {
+            if (this.props.searchStore.query) {
+                this.showNoResult(true);
+            } else {
+                this.showEmptySearch(true);
+            }
+        }
     }
 
 	addNode = (tech) => {
@@ -54,7 +77,7 @@ class Graph extends React.Component {
         let focus = false;
         const searchQuery = this.props.searchStore.query;
         if (searchQuery) {
-            this.regexpName = new RegExp(searchQuery.trim(), 'i');
+            this.regexpName = new RegExp(searchQuery.replace(/[^a-zA-Z\-_]/gi, "").trim(), 'i');
             focus = this.regexpName.test(tech);
         }
 
@@ -84,12 +107,6 @@ class Graph extends React.Component {
                         stroke: '#fb8803',
                         strokeWidth: 2,
                         sourceMarker: {
-                        },
-                        targetMarker: {
-                            'type': 'circle',
-                            'r': 0,
-                            'stroke': '#fb8803',
-                            'fill': '#fb8803',
                         }
                     },
                 }
@@ -107,6 +124,9 @@ class Graph extends React.Component {
             }
         });
         this.nodeMap = {};
+        if (this.paper) {
+            this.paper.setDimensions(1024, 100);
+        }
     }
     handleClickOpenCreationModale = () => {
         this.setState({ open: true });
@@ -115,34 +135,59 @@ class Graph extends React.Component {
         this.setState({ open: false, createName: "" });
         this.props.searchStore.clearExistingTechnos();
     }
+    showEmptySearch = (show) => {
+        if (show) {
+            $('#emptySearch').show();
+        } else {
+            $('#emptySearch').hide();
+        }
+    }
+    showNoResult = (show) => {
+        if (show) {
+            $('#noResult').show();
+        } else {
+            $('#noResult').hide();
+        }
+    }
 
     render() {
-
         const { classes } = this.props;
 
         this.clear();
         
-        if (this.props.technos.nodes) {
+        this.showEmptySearch(false);
+        this.showNoResult(false);
+        if (this.props.technos.nodes && this.props.technos.nodes.length > 0) {
             this.props.technos.nodes.forEach((node) => {
                 this.addNode(node);
             });
-        }
-        if (this.props.technos.links) {
-            this.props.technos.links.forEach((link) => {
-                this.addLink(link);
-            });
+            if (this.props.technos.links) {
+                this.props.technos.links.forEach((link) => {
+                    this.addLink(link);
+                });
+            }
+        } else {
+            if (this.props.searchStore.query && this.props.searchStore.query.trim()) {
+                this.showNoResult(true);
+            } else {
+                this.showEmptySearch(true);
+            }
         }
 
-        joint.layout.DirectedGraph.layout(this.graph, { marginX: 50, marginY: 50 });
+        joint.layout.DirectedGraph.layout(this.graph, { marginX: 50, marginY: 50, rankDir:'LR' });        
 
         return (
-            <div className="graph">
+            <div>
                 <Fab color="secondary" aria-label="Add" className={classes.fab} onClick={this.handleClickOpenCreationModale}>
                     <AddIcon />
                 </Fab>
-                <div id="playground" ref="placeholder">
+                <div id="graph" className="graph">
+                    <div id="playground" className={classes.playground} ref="placeholder">
+                    </div>
+                    <div id="emptySearch" className={classes.emptySearch}>Faites une recherche</div>
+                    <div id="noResult" className={classes.emptySearch}>Aucun résultat</div>
+                    <CreationTechnoModale open={this.state.open} onClose={this.handleCloseCreationModale}></CreationTechnoModale>
                 </div>
-                <CreationTechnoModale open={this.state.open} onClose={this.handleCloseCreationModale}></CreationTechnoModale>
             </div>
         )
     }

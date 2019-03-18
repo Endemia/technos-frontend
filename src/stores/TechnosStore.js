@@ -15,12 +15,19 @@ class TechnosStore {
 
 	@action.bound
 	getTechnos(name, exactMatch, depth) {
-		this.technosApi.getTechnos(name, exactMatch, depth).then(res => {
+		if (name && name.replace(/[^a-zA-Z]/gi, "").trim()) {
+			this.technosApi.getTechnos(name.replace(/[^a-zA-Z\-_]/gi, "").trim(), exactMatch, depth).then(res => {
+				runInAction(() => {
+					this.technos.nodes = this.formatNodes(res);
+					this.technos.links = this.formatLinks(res);
+				})
+			});
+		} else{
 			runInAction(() => {
-				this.technos.nodes = this.formatNodes(res);
-				this.technos.links = this.formatLinks(res);
+				this.technos.nodes = [];
+				this.technos.links = [];
 			})
-		});
+		}
 	}
 
 	formatNodes(toFormat) {

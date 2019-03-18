@@ -2,7 +2,6 @@ import React from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import { observer, inject } from 'mobx-react';
 import { debounce } from "throttle-debounce";
-import classNames from 'classnames';
 
 import config from '../../conf/config.json';
 import AuthenticationApi from '../../api/AuthenticationApi';
@@ -66,9 +65,6 @@ const styles = theme => ({
 		display: "flex",
 		justifyContent: "space-between"
 	},
-	error: {
-		color: theme.palette.secondary.main
-	},
 	divider: {
 		marginBottom: 10,
 	},
@@ -82,6 +78,8 @@ const styles = theme => ({
 	}
 });
 
+@inject("routing")
+@observer
 class Register extends React.Component {
 
 	state = {
@@ -182,7 +180,7 @@ class Register extends React.Component {
 
   	checkEmail = () => {
   		if (this.state.email !== "") {
-  			var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@cgi.com$/;
+  			var re = /^(([^<>()[]\\.,;:\s@"]+(\.[^<>()[]\\.,;:\s@"]+)*)|(".+"))@cgi.com$/;
   			if (re.test(this.state.email)) {
   				this.setState({ emailOk: "ok" });
   			} else {
@@ -220,6 +218,7 @@ class Register extends React.Component {
 	render() {
 
 		const { classes } = this.props;
+		const { push } = this.props.routing;
 
 		return (
 			<div className={classes.container}>
@@ -325,7 +324,7 @@ class Register extends React.Component {
 							    </Grid>
 							</Grid>
 							<div className={classes.buttons}>
-					        	<div></div>
+					        	<Button variant="outlined" onClick={() => push('/')}>Cancel</Button>
 					        	<Button variant="contained" color="secondary" disabled={this.state.registerDisabled} onClick={this.registerDebounced}>
 					        		Register
 					        	</Button>

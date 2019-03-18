@@ -25,18 +25,22 @@
     z-index: 2;
     min-width: 100px;
 }
+.hightlight {
+    font-weight: bold;
+    background-color: rgba(255, 255, 255, 0);
+}
 .html-element.focus {
     border: 2px #d8ff00 solid;
 }
 .graph {
     position: absolute;
     top: 86px;
-}
-.search-already-exists {
-    background-color: #efefef;
-    margin-top: 20px;
-    overflow-y: scroll;
-    max-height: 300px;
+    bottom: 0;
+    overflow-x: hidden;
+    background-color: rgba(255, 255, 255, 0.1);
+    overflow-y: auto;
+    scrollbar-color: #e62b2b #2e3441;
+    scrollbar-width: thin;
 }
 .star1, .star2, .star3  {
     /* Enable interacting with inputs only. */
@@ -98,4 +102,31 @@
     font-size: 20px;
     background-color: #c8c8c8;
     padding-left: 10px;
+}
+.graph::-webkit-scrollbar-button{
+    display: none;
+    height: 13px;
+    border-radius: 0px;
+    background-color: #AAA;
+} 
+.graph::-webkit-scrollbar-button:hover{
+    background-color: #AAA;
+}
+.graph::-webkit-scrollbar-thumb{
+    background-color: #c62828;
+    border-radius: 4px;
+}
+.graph::-webkit-scrollbar-thumb:hover{
+    background-color: #e62b2b;
+}
+.graph::-webkit-scrollbar-track{
+    background-color: #2e3441;
+    border-radius: 4px;
+}
+.graph::-webkit-scrollbar-track:hover{
+    background-color: #2e3441;
+    border-radius: 4px;
+}
+.graph::-webkit-scrollbar{
+    width: 8px;
 }
