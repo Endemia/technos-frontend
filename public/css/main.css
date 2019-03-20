@@ -42,6 +42,19 @@
     scrollbar-color: #e62b2b #2e3441;
     scrollbar-width: thin;
 }
+.centerOn {
+    pointer-events: auto;
+    cursor: pointer;
+    position: absolute;
+    top: 0;
+    right: 0px;
+    width:20px;
+    height:20px;
+    background:url(../img/centerOn.png) no-repeat;
+}
+.centerOn:hover {
+    background:url(../img/centerOnActive.png) no-repeat;   
+}
 .star1, .star2, .star3  {
     /* Enable interacting with inputs only. */
     pointer-events: auto;

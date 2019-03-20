@@ -33,6 +33,29 @@ class TechnosApi {
 	  	    });
 	}
 
+	centerOn(name) {
+		const query = `
+  			{
+  				centerOnTechno(name: "${name}") {
+    				name
+    				niveau
+    				children {
+	      				name
+    				}
+    			}
+  			}
+		`
+
+		return apolloFetch({ query })
+  			.then(function (response) {
+			    return response.data.centerOnTechno;
+  			})
+  			.catch(function (error) {
+			    console.log(error);
+  				throw error;
+	  	    });
+	}
+
 	createTechno(name, links, linkType) {
 		const query = `
 	  		mutation {
@@ -45,6 +68,25 @@ class TechnosApi {
 		return apolloFetch({ query })
   			.then(function (response) {
 			    return response.data.addTechno;
+  			})
+  			.catch(function (error) {
+			    console.log(error);
+  				throw error;
+	  	    });
+	}
+
+	createLink(from, to) {
+		const query = `
+	  		mutation {
+	  			addLink(from: "${from}", to: "${to}") {
+      				name
+	  			}
+	  		}
+		`;
+
+		return apolloFetch({ query })
+  			.then(function (response) {
+			    return response.data.addLink;
   			})
   			.catch(function (error) {
 			    console.log(error);

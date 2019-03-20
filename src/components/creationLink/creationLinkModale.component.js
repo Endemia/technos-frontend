@@ -4,28 +4,17 @@ import { debounce } from "throttle-debounce";
 import TechnosApi from '../../api/TechnosApi';
 import { withStyles } from '@material-ui/core/styles';
 import { renderInputComponent, renderSuggestion, getSuggestionValue } from './suggestUtils'
-import Highlighter from "react-highlight-words";
 import { withSnackbar } from 'notistack';
 
 import Autosuggest from 'react-autosuggest';
-import TextField from '@material-ui/core/TextField';
 import Drawer from '@material-ui/core/Drawer';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
-import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemText from '@material-ui/core/ListItemText';
 import Grid from '@material-ui/core/Grid';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
-import ForwardIcon from '@material-ui/icons/Forward';
 import Button from '@material-ui/core/Button';
 import Paper from '@material-ui/core/Paper';
-import Radio from '@material-ui/core/Radio';
-import RadioGroup from '@material-ui/core/RadioGroup';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Chip from '@material-ui/core/Chip';
 
 const styles = theme => ({
     root: {
@@ -159,46 +148,32 @@ const styles = theme => ({
 
 @inject("searchStore", "technosStore", "notesStore")
 @observer
-class CreationTechnoModale extends React.Component {
-
+class CreationLinkModale extends React.Component {
 	state = {
-        createName: "",
-        createLink: "",
-        links: [],
-        linkType: "child",
-        creationDisabled: true,
+        createLinkFrom: "",
+        createLinkTo: "",
+        createLinkFromSelected: false,
+        createLinkToSelected: false,
         suggestions: this.props.searchStore.existingTechnosLink,
     };
 
 	constructor(props) {
         super(props);
-        this.updateExistingListDebounced = debounce(300, this.updateExistingList);
         this.updateExistingListLinkDebounced = debounce(300, this.updateExistingListLink);
     }
 
     handleCreate = () => {
-        new TechnosApi().createTechno(this.state.createName, this.state.links, this.state.linkType).then((res) => {
-            this.props.enqueueSnackbar('Techno ajoutée.', {variant:'success', autoHideDuration:1000});
-            this.props.searchStore.setQuery(res.name);
-            this.props.searchStore.setExactQuery(true);
-            this.props.technosStore.centerOn(res.name);
-            this.props.onClose();
+        new TechnosApi().createLink(this.state.createLinkFrom, this.state.createLinkTo).then((res) => {
+        	if (res) {
+	            this.props.enqueueSnackbar('Lien ajouté.', {variant:'success', autoHideDuration:1000});
+	            this.props.searchStore.setQuery(this.state.createLinkFrom);
+            	this.props.searchStore.setExactQuery(true);
+            	this.props.technosStore.centerOn(this.state.createLinkFrom);
+	            this.props.onClose();
+	        } else {
+	        	this.props.enqueueSnackbar('Erreur lors de l\'ajout du lien.', {variant:'error', autoHideDuration:1000});
+	        }
         })
-    }
-    handleChangeCreateName = (e) => {
-        this.updateExistingListDebounced(e.target.value);
-    }
-    handleChangeLinkType = (e) => {
-        this.setState({linkType: e.target.value})
-    }
-    updateExistingList = (query) => {
-        if (query) {
-            this.setState({createName: query, creationDisabled: false});
-            this.props.searchStore.getExistingTechnos(query);
-        } else {
-            this.setState({createName: "", creationDisabled: true});
-            this.props.searchStore.clearExistingTechnos();
-        }
     }
     updateExistingListLink = (query) => {
         if (query) {
@@ -208,13 +183,6 @@ class CreationTechnoModale extends React.Component {
         } else {
             this.props.searchStore.clearExistingTechnosLink();
         }
-    }
-
-	goToTechno = (technoName) => {
-        this.props.searchStore.setQuery(technoName);
-        this.props.searchStore.setExactQuery(true);
-        this.props.technosStore.centerOn(technoName, true);
-        this.props.onClose();
     }
 
     handleSuggestionsFetchRequested = ({ value }) => {
@@ -233,16 +201,13 @@ class CreationTechnoModale extends React.Component {
         });
     }
 
-    selectSuggestion = (suggestion) => {
-        const value =  getSuggestionValue(suggestion);
-        if (this.state.links.indexOf(value) < 0) {
-            this.state.links.push(value);
-        }
-        return "";
+    selectSuggestionFrom = (suggestion) => {
+    	this.setState({createLinkFromSelected: true});
+        return getSuggestionValue(suggestion);
     }
-
-    handleDeleteLink = (linkToDelete) => {
-        this.setState({links: this.state.links.filter(link => link !== linkToDelete)});
+    selectSuggestionTo = (suggestion) => {
+    	this.setState({createLinkToSelected: true});
+        return getSuggestionValue(suggestion);
     }
 
     render() {
@@ -254,7 +219,6 @@ class CreationTechnoModale extends React.Component {
             suggestions: this.state.suggestions,
             onSuggestionsFetchRequested: this.handleSuggestionsFetchRequested,
             onSuggestionsClearRequested: this.handleSuggestionsClearRequested,
-            getSuggestionValue : this.selectSuggestion,
             renderSuggestion
         };
         
@@ -262,69 +226,22 @@ class CreationTechnoModale extends React.Component {
         	<div>
         		<Drawer anchor="right" open={this.props.open} onClose={this.props.onClose} aria-labelledby="form-dialog-title">
                     <div className={classes.drawer}>
-                        <DialogTitle id="form-dialog-title" className={classes.title}>Ajouter une techno</DialogTitle>
+                        <DialogTitle id="form-dialog-title" className={classes.title}>Ajouter un lien</DialogTitle>
                         <DialogContent style={{overflowY:'hidden'}}>
                             <DialogContentText>
-                                Vous pouvez ajouter une nouvelle techno et la lier à une techno existante.
+                                Vous pouvez ajouter un nouveau lien entre deux technos.
                             </DialogContentText>
                             <div className={classes.content}>
                                 <Grid container spacing={24} className={classes.group}>
-                                    <Grid item xs={12} className={classes.thinnerBoth}>
-                                        <TextField margin="dense" label="Nouvelle techno" type="text" fullWidth onChange={this.handleChangeCreateName} helperText=" "/>
-                                    </Grid>
-                                    <Grid item xs={12} className={classes.thinnerBoth}>
-                                        {this.props.searchStore.existingTechnos.length > 0 &&
-                                            <div>
-                                                <List dense={true} className={classes.searchAlreadyExists}>
-                                                    <ListItem key="header"><ListItemText secondary="Technos connues" /></ListItem>
-                                                    {this.props.searchStore.existingTechnos.map(techno => {
-                                                        return (
-                                                            <ListItem button key={techno.name} onClick={e => this.goToTechno(techno.name)}>
-                                                                <ListItemIcon><ForwardIcon /></ListItemIcon>
-                                                                <Highlighter highlightClassName='hightlight' searchWords={[this.state.createName]} autoEscape={true} textToHighlight={techno.name} />
-                                                            </ListItem>
-                                                        )
-                                                    })
-                                                    }
-                                                </List>
-                                                <div className={classes.verticalSpacer}></div>
-                                            </div>
-                                        }
-                                    </Grid>
-                                </Grid>
-                                <Grid container spacing={24} className={classes.group}>
-                                    <Grid item xs={12} className={classes.thinnerBoth}>
-                                        <RadioGroup name="linkType" className={classes.linkType} value={this.state.linkType} onChange={this.handleChangeLinkType} >
-                                            <FormControlLabel className={classes.spacer} value="child" control={<Radio />} label="Enfant de" />
-                                            <FormControlLabel className={classes.spacer} value="parent" control={<Radio />} label="Parent de" />
-                                        </RadioGroup>
-                                    </Grid>
-                                    
-                                    {this.state.links.length > 0 &&
-                                        <Grid item xs={12} className={classes.thinnerTop}>
-                                            {this.state.links.map(techno => {
-                                                return (
-                                                    <Chip
-                                                        key={techno}
-                                                        label={techno}
-                                                        onDelete={(e) => {this.handleDeleteLink(techno)}}
-                                                        className={classes.chip}
-                                                        color="secondary"
-                                                    />
-                                                )
-                                            })}
-                                        </Grid>
-                                    }
-
-                                    
                                     <Grid item xs={12} className={classes.thinnerTop}>
                                         <Autosuggest
                                           {...autosuggestProps}
+                                          getSuggestionValue = {this.selectSuggestionFrom}
                                           inputProps={{
                                             classes,
-                                            label: 'Chercher',
-                                            value: this.state.createLink,
-                                            onChange: this.handleChange('createLink'),
+                                            label: 'De',
+                                            value: this.state.createLinkFrom,
+                                            onChange: this.handleChange('createLinkFrom'),
                                           }}
                                           theme={{
                                             container: classes.container,
@@ -337,13 +254,39 @@ class CreationTechnoModale extends React.Component {
                                             </Paper>
                                           )}
                                         />
+                                        
+                                    </Grid>
+                                </Grid>
+                                <Grid container spacing={24} className={classes.group}>
+                                    <Grid item xs={12} className={classes.thinnerTop}>
+                                        <Autosuggest
+                                          {...autosuggestProps}
+                                          getSuggestionValue = {this.selectSuggestionTo}
+                                          inputProps={{
+                                            classes,
+                                            label: 'Vers',
+                                            value: this.state.createLinkTo,
+                                            onChange: this.handleChange('createLinkTo'),
+                                          }}
+                                          theme={{
+                                            container: classes.container,
+                                            suggestionsList: classes.suggestionsList,
+                                            suggestion: classes.suggestion,
+                                          }}
+                                          renderSuggestionsContainer={options => (
+                                            <Paper {...options.containerProps} square id="suggest" className={classes.suggestionList}>
+                                              {options.children}
+                                            </Paper>
+                                          )}
+                                        />
+                                        
                                     </Grid>
                                 </Grid>
                             </div>
                         </DialogContent>
                         <DialogActions>
                             <Button variant="outlined" onClick={this.props.onClose}>Cancel</Button>
-                            <Button variant="contained" color="secondary" disabled={this.state.creationDisabled || this.props.searchStore.existingTechnosExactMatch} onClick={this.handleCreate} >Create</Button>
+                            <Button variant="contained" color="secondary" disabled={!this.state.createLinkFromSelected || !this.state.createLinkToSelected} onClick={this.handleCreate} >Create</Button>
                         </DialogActions>
                     </div>
                 </Drawer>
@@ -353,4 +296,4 @@ class CreationTechnoModale extends React.Component {
 
 }
 
-export default withStyles(styles)(withSnackbar(CreationTechnoModale));
+export default withStyles(styles)(withSnackbar(CreationLinkModale));

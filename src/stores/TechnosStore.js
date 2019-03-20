@@ -15,8 +15,8 @@ class TechnosStore {
 
 	@action.bound
 	getTechnos(name, exactMatch, depth) {
-		if (name && name.replace(/[^a-zA-Z]/gi, "").trim()) {
-			this.technosApi.getTechnos(name.replace(/[^a-zA-Z\-_]/gi, "").trim(), exactMatch, depth).then(res => {
+		if (name && name.replace(/[^a-zA-Z0-9\-_ ]/gi, "").trim()) {
+			this.technosApi.getTechnos(name.replace(/[^a-zA-Z0-9\-_ ]/gi, "").trim(), exactMatch, depth).then(res => {
 				runInAction(() => {
 					this.technos.nodes = this.formatNodes(res);
 					this.technos.links = this.formatLinks(res);
@@ -28,6 +28,16 @@ class TechnosStore {
 				this.technos.links = [];
 			})
 		}
+	}
+
+	@action.bound
+	centerOn(name) {
+		this.technosApi.centerOn(name).then(res => {
+			runInAction(() => {
+				this.technos.nodes = this.formatNodes(res);
+				this.technos.links = this.formatLinks(res);
+			})
+		})
 	}
 
 	formatNodes(toFormat) {

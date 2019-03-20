@@ -45,6 +45,7 @@ class SearchBox extends Component {
 	}
 
 	updateStore = (query) => {
+    this.props.searchStore.setExactQuery(false);
 		this.props.searchStore.setQuery(query);
 		this.props.technosStore.getTechnos(query);
 	}

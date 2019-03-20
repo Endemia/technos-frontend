@@ -8,13 +8,22 @@ import $ from 'jquery';
 import { withStyles } from '@material-ui/core/styles';
 import Fab from '@material-ui/core/Fab';
 import AddIcon from '@material-ui/icons/Add';
+import LinkIcon from '@material-ui/icons/Link';
 
 import CreationTechnoModale from '../creationTechno/creationTechnoModale.component';
+import CreationLinkModale from '../creationLink/creationLinkModale.component';
 
 const styles = theme => ({
     fab: {
         position: 'absolute',
         top: 86,
+        left: 930,
+        margin: theme.spacing.unit,
+        zIndex: 10
+    },
+    fabLink: {
+        position: 'absolute',
+        top: 146,
         left: 930,
         margin: theme.spacing.unit,
         zIndex: 10
@@ -36,7 +45,7 @@ const styles = theme => ({
     }
 });
 
-@inject("searchStore", "technosStore", "notesStore")
+@inject("searchStore", "technosStore", "notesStore", "userStore")
 @observer
 class Graph extends React.Component {
 
@@ -77,13 +86,17 @@ class Graph extends React.Component {
         let focus = false;
         const searchQuery = this.props.searchStore.query;
         if (searchQuery) {
-            this.regexpName = new RegExp(searchQuery.replace(/[^a-zA-Z\-_]/gi, "").trim(), 'i');
-            focus = this.regexpName.test(tech);
+            if (!this.props.searchStore.exactQuery) {
+                this.regexpName = new RegExp(searchQuery.replace(/[^a-zA-Z0-9\-_ ]/gi, "").trim(), 'i');
+                focus = this.regexpName.test(tech);
+            } else {
+                focus = searchQuery === tech;
+            }
         }
 
         const noteForTechno = this.props.notes.filter(n => n.techno === tech);
 
-        const techRect = new TechnoRectangle(100, 100, tech, noteForTechno.length > 0 ? noteForTechno[0].note : 0, focus, this.onUpdateNote).getShape();
+        const techRect = new TechnoRectangle(100, 100, tech, noteForTechno.length > 0 ? noteForTechno[0].note : 0, focus, this.onUpdateNote, this.onCenter).getShape();
         techRect.addTo(this.graph);
 
         this.nodeMap[tech]=techRect.id;
@@ -91,6 +104,12 @@ class Graph extends React.Component {
 
     onUpdateNote = (techno, note) => {
         this.props.notesStore.updateUserNote(techno, note);
+    }
+
+    onCenter = (techno) => {
+        this.props.searchStore.setExactQuery(true);
+        this.props.searchStore.setQuery(techno);
+        this.props.technosStore.centerOn(techno);
     }
 
     addLink = (link) => {
@@ -131,9 +150,16 @@ class Graph extends React.Component {
     handleClickOpenCreationModale = () => {
         this.setState({ open: true });
     }
+    handleClickOpenCreationLinkModale = () => {
+        this.setState({ openLink: true });
+    }
     handleCloseCreationModale = () => {
-        this.setState({ open: false, createName: "" });
+        this.setState({ open: false });
         this.props.searchStore.clearExistingTechnos();
+    }
+    handleCloseCreationLinkModale = () => {
+        this.setState({ openLink: false });
+        this.props.searchStore.clearExistingTechnosLink();
     }
     showEmptySearch = (show) => {
         if (show) {
@@ -181,12 +207,18 @@ class Graph extends React.Component {
                 <Fab color="secondary" aria-label="Add" className={classes.fab} onClick={this.handleClickOpenCreationModale}>
                     <AddIcon />
                 </Fab>
+                {this.props.userStore.user.isAdmin &&
+                    <Fab color="secondary" aria-label="Add link" className={classes.fabLink} onClick={this.handleClickOpenCreationLinkModale}>
+                        <LinkIcon />
+                    </Fab>
+                }
                 <div id="graph" className="graph">
                     <div id="playground" className={classes.playground} ref="placeholder">
                     </div>
                     <div id="emptySearch" className={classes.emptySearch}>Faites une recherche</div>
                     <div id="noResult" className={classes.emptySearch}>Aucun résultat</div>
                     <CreationTechnoModale open={this.state.open} onClose={this.handleCloseCreationModale}></CreationTechnoModale>
+                    <CreationLinkModale open={this.state.openLink} onClose={this.handleCloseCreationLinkModale}></CreationLinkModale>
                 </div>
             </div>
         )

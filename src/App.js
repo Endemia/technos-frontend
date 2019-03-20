@@ -5,11 +5,13 @@ import { MuiThemeProvider } from '@material-ui/core/styles';
 import technosStore from './stores/TechnosStore';
 import searchStore from './stores/SearchStore';
 import notesStore from './stores/NotesStore';
+import userStore from './stores/UserStore';
 import { Provider } from 'mobx-react';
 import appHistory from './history';
 import { RouterStore, syncHistoryWithStore } from 'mobx-react-router';
 import { Router, Route } from "react-router";
 import { SnackbarProvider } from 'notistack';
+import jwt_decode from 'jwt-decode';
 
 import Login from './components/login/login.component';
 import Register from './components/register/register.component';
@@ -31,6 +33,7 @@ class App extends Component {
 	constructor(props) {
         super(props);
         if (sessionStorage.getItem('user')) {
+        	userStore.setUser(jwt_decode(sessionStorage.getItem('user')));
         	this.state.loggedIn = true ;
         }
     }
@@ -45,7 +48,7 @@ class App extends Component {
 
   	render() {
 	    return (
-	      	<Provider technosStore={technosStore} searchStore={searchStore} notesStore={notesStore} routing={routingStore}>
+	      	<Provider technosStore={technosStore} searchStore={searchStore} notesStore={notesStore} userStore={userStore} routing={routingStore}>
 	      		<MuiThemeProvider theme={theme}>
 		      		<Router history={history}>
 		      			<SnackbarProvider maxSnack={3}>

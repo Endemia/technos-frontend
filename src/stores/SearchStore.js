@@ -4,6 +4,7 @@ import { deburr } from 'lodash';
 
 class SearchStore {
 	@observable query="";
+	@observable exactQuery=false;
 	@observable existingTechnos=[];
 	@observable existingTechnosExactMatch = false;
 	@observable existingTechnosLink=[];
@@ -12,6 +13,10 @@ class SearchStore {
 
 	setQuery(query) {
 		this.query = query;
+	}
+
+	setExactQuery(exactQuery) {
+		this.exactQuery = exactQuery;
 	}
 
 	@action.bound

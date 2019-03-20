@@ -3,7 +3,6 @@ import TextField from '@material-ui/core/TextField';
 import MenuItem from '@material-ui/core/MenuItem';
 import Highlighter from "react-highlight-words";
 
-
 const renderInputComponent = (inputProps) => {
     const { classes, inputRef = () => {}, ref, ...other } = inputProps;
 

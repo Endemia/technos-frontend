@@ -25,6 +25,7 @@ import $ from 'jquery';
                         '</div>',
                     '</div>',
                 '</div>',
+                '<div class="centerOn">&nbsp;</div>',
             '</div>'
         ].join(''),
 
@@ -54,6 +55,10 @@ import $ from 'jquery';
                     this.model.get('onUpdateNote')(this.model.get('label'), 2);
                 }
                 this.updateBox();
+                e.stopPropagation();
+            });
+            this.$box.find('.centerOn').on('mousedown', e => {
+                this.model.get('onCenter')(this.model.get('label'));
                 e.stopPropagation();
             });
 
@@ -102,13 +107,14 @@ import $ from 'jquery';
 
 class TechnoRectangle {
 
-    constructor(x, y, label, note, focus, onUpdateNote) {
+    constructor(x, y, label, note, focus, onUpdateNote, onCenter) {
         this.x = x;
         this.y = y;
         this.label = label;
         this.note = note;
         this.focus = focus;
         this.onUpdateNote = onUpdateNote;
+        this.onCenter = onCenter;
         this.w = label.length * 10 + 30;
     }
 
@@ -120,6 +126,7 @@ class TechnoRectangle {
             note: this.note,
             focus: this.focus,
             onUpdateNote: this.onUpdateNote,
+            onCenter: this.onCenter,
         });
 
         return decoratedRect;
