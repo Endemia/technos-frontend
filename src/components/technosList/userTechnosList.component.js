@@ -2,76 +2,130 @@ import React from 'react';
 import { observer, inject } from 'mobx-react';
 import { withStyles } from '@material-ui/core/styles';
 
-import Typography from '@material-ui/core/Typography';
-import Paper from '@material-ui/core/Paper';
+import TechnoCard from './technoCard.component';
 
-const styles = {
+import Typography from '@material-ui/core/Typography';
+import Button from '@material-ui/core/Button';
+import SortByAlphaIcon from '@material-ui/icons/SortByAlpha';
+import SortIcon from '@material-ui/icons/Sort';
+
+const styles = theme => ({
 	container: {
 		display: 'flex',
 		flexWrap: 'wrap',
-		marginLeft: 10,
-		marginTop: 36
+		marginLeft: 10
 	},
-	card: {
-		width: 200,
-		flexGrow: 0,
-		margin: 5,
-		backgroundColor: 'rgba(255, 255, 255, .8)',
+	titleContainer: {
+		display: 'flex',
+		justifyContent: 'space-around'
 	},
-	cardContent: {
-		padding: '5px 0 5px 0 !important',
+	title: {
+		color: '#ffffff',
+		height: 26
 	},
-	technoName: {
-		fontWeight: 'bold'
+	starTitle: {
+		display: 'flex',
+		justifyContent: 'center',
+		paddingTop: 15
+	},
+	sortButton: {
+		padding: '5px 0',
+		color: '#ffffff',
+		minWidth: 30,
+	},
+	sortActive: {
+		color: theme.palette.secondary.main
 	}
-};
+});
 
-@inject("notesStore")
+@inject("notesStore", "searchStore", "technosStore")
 @observer
 class UserTechnosList extends React.Component {
 
-	updateNote = (e, techno, fromNote, toNote) => {
-		e.stopPropagation();
-		if (fromNote === toNote) {
-			toNote = 0;
-		}
-		this.props.notesStore.updateUserNote(techno, toNote);
+	state = {
+		tri: "alpha"
 	}
 
-	listeNote = () => {
-		return this.props.notesStore.userNotes.filter(note => note.note > 0)
-		.sort(function(a,b) {
-			var x = a.techno.toLowerCase();
-			var y = b.techno.toLowerCase();
-			return x < y ? -1 : x > y ? 1 : 0;
-		});
-	}
+    setTri = (tri) => {
+    	this.setState({tri})
+    }
+
+    getNotesAlphaSorted = () => {
+    	const { classes } = this.props;
+
+    	return (
+    		<div className={classes.container}>
+    		{this.props.notesStore.userNotes.filter(note => note.note > 0).sort(this.compareAlpha).map(note=> {
+	    		return (
+					<TechnoCard note={note} key={note.techno}></TechnoCard>
+				)
+			})}
+    		</div>
+    	)
+    }
+
+    getNotesEvalSorted = () => {
+    	const { classes } = this.props;
+
+    	const oneStar = this.props.notesStore.userNotes.filter(note => note.note === 1).sort(this.compareAlpha);
+    	const twoStars = this.props.notesStore.userNotes.filter(note => note.note === 2).sort(this.compareAlpha);
+
+		return (
+			<div>
+				{oneStar.length > 0 &&
+					<div>
+						<div className={classes.starTitle}>
+							<div className={'star1 active'}></div>
+						</div>
+						<div className={classes.container}>
+						{oneStar.length > 0 && oneStar.map(note => 
+							<TechnoCard note={note} key={note.techno}></TechnoCard>
+						)}
+						</div>
+					</div>
+				}
+				{twoStars.length > 0 &&
+					<div>
+						<div className={classes.starTitle}>
+							<div className={'star1 active'}></div><div className={'star1 active'}></div>
+						</div>
+						<div className={classes.container}>
+							{twoStars.map(note => 
+								<TechnoCard note={note} key={note.techno}></TechnoCard>
+							)}
+						</div>
+					</div>
+				}
+			</div>
+		)
+    }
+
+    compareAlpha = (a, b) => {
+		var x = a.techno.toLowerCase();
+		var y = b.techno.toLowerCase();
+		return x < y ? -1 : x > y ? 1 : 0;
+    }
 
 	render() {
 
 		const { classes } = this.props;
 
 		return (
-			<div className={classes.container}>
-				{this.listeNote().map(note => {
-					return (
-						<Paper className={classes.card} key={note.techno}>
-							<Typography color="textSecondary" gutterBottom>
-					          	<span className={classes.technoName}>
-					          		{note.techno}
-				          		</span>
-				          	</Typography>
-				          	<div className="stars_container">
-				          		<div className="stars" >
-				          			<div className={note.note > 0 ? 'star1 active' : 'star1'} onClick={e => this.updateNote(e, note.techno, note.note, 1)}>
-					          			<div className={note.note > 1 ? 'star2 active' : 'star2'} onClick={e => this.updateNote(e, note.techno, note.note, 2)}>
-					          			</div>
-				          			</div>
-						        </div>
-					        </div>
-						</Paper>
-					)
-				})}
+			<div>
+				<div className={classes.titleContainer}>
+					<div></div>
+					<Typography variant="h6" gutterBottom className={classes.title}>Mes évaluations</Typography>
+					<div>
+						<Button size="small" className={classes.sortButton} onClick={e => this.setTri('alpha')}><SortByAlphaIcon className={this.state.tri === 'alpha' ? classes.sortActive : ''}></SortByAlphaIcon></Button>
+						<Button size="small" className={classes.sortButton} onClick={e => this.setTri('eval')}><SortIcon className={this.state.tri === 'eval' ? classes.sortActive : ''}></SortIcon></Button>
+					</div>
+				</div>
+				{this.state.tri === "alpha" && 
+					this.getNotesAlphaSorted()
+				}
+				{this.state.tri === "eval" && 
+					this.getNotesEvalSorted()
+				}
 			</div>
 		)
 	}
