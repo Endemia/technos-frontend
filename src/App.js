@@ -35,11 +35,13 @@ class App extends Component {
         if (sessionStorage.getItem('user')) {
         	userStore.setUser(jwt_decode(sessionStorage.getItem('user')));
         	this.state.loggedIn = true ;
+        	this.getUserNotes();
         }
     }
 
     onLogin = () => {
         this.setState({ loggedIn: true });
+        this.getUserNotes();
     }
 
     onLogout = () => {
@@ -51,7 +53,6 @@ class App extends Component {
     }
 
   	render() {
-  		this.getUserNotes();
 	    return (
 	      	<Provider technosStore={technosStore} searchStore={searchStore} notesStore={notesStore} userStore={userStore} routing={routingStore}>
 	      		<MuiThemeProvider theme={theme}>

@@ -1,7 +1,6 @@
 import React from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import { observer, inject } from 'mobx-react';
-import jwt_decode from 'jwt-decode';
 
 import AuthenticationApi from '../../api/AuthenticationApi';
 
@@ -82,7 +81,6 @@ class Login extends React.Component {
         new AuthenticationApi().login(this.state.login, this.state.password).then((token) => {
         	if (token) {
 				sessionStorage.setItem("user", token);
-				console.log(jwt_decode(token));
 				this.props.onLogin();
 			}
         })

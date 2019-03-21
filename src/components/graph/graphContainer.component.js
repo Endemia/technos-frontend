@@ -9,6 +9,10 @@ import UserTechnosList from '../technosList/userTechnosList.component';
 const styles = {
 	container: {
 		display: "flex",
+		width: '100%',
+	},
+	userTechnosList: {
+		width: '100%',
 	}
 };
 
@@ -35,7 +39,7 @@ class GraphContainer extends React.Component {
 					<SearchBox></SearchBox>
 					<Graph technos={this.props.technosStore.technos} notes={this.props.notesStore.userNotes}></Graph>
 				</div>
-				<div>
+				<div className={classes.userTechnosList}>
 					<UserTechnosList></UserTechnosList>
 				</div>
 			</div>

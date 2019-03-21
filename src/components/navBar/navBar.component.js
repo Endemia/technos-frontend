@@ -66,7 +66,6 @@ class NavBar extends Component {
 
   	render() {
   		const { classes } = this.props;
-        const { push } = this.props.routing;
         const { anchorEl } = this.state;
 
   		return (
@@ -78,12 +77,7 @@ class NavBar extends Component {
 	          		<Typography variant="h6" color="inherit" className={classes.grow}>
 	            		News
 	          		</Typography>
-                    <MenuItem>
-                        <Button variant="contained" color="secondary" onClick={() => push('/technos')}>Change url</Button>
-                    </MenuItem>
-                    
-                        <div className={classes.userName}><PersonPinIcon></PersonPinIcon>{this.props.userStore.user.prenom} {this.props.userStore.user.nom}</div>
-                    
+                    <div className={classes.userName}><PersonPinIcon></PersonPinIcon>{this.props.userStore.user.prenom} {this.props.userStore.user.nom}</div>
                     <MenuItem>
     	          		<Button variant="contained" color="secondary" onClick={this.logout}>Logout</Button>
                     </MenuItem>
@@ -91,7 +85,7 @@ class NavBar extends Component {
                 <Menu id="simple-menu" anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={this.closeMenu} >
                     <MenuItem onClick={this.goHome}>Home</MenuItem>
                     <MenuItem onClick={this.goListe}>Liste</MenuItem>
-                    <MenuItem onClick={this.handleClose}>Logout</MenuItem>
+                    <MenuItem onClick={this.logout}>Logout</MenuItem>
                 </Menu>
 	      	</AppBar>
 	    );

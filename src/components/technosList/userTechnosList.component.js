@@ -35,6 +35,19 @@ const styles = theme => ({
 	},
 	sortActive: {
 		color: theme.palette.secondary.main
+	},
+	helpContainer: {
+		display: 'flex',
+		marginTop: 70,
+		justifyContent: 'center',
+	},
+	help: {
+		color: "rgba(255, 255, 255, .4)",
+		width: '70%',
+	},
+	helpLine: {
+		display: 'flex',
+		justifyContent: 'center',
 	}
 });
 
@@ -120,6 +133,17 @@ class UserTechnosList extends React.Component {
 						<Button size="small" className={classes.sortButton} onClick={e => this.setTri('eval')}><SortIcon className={this.state.tri === 'eval' ? classes.sortActive : ''}></SortIcon></Button>
 					</div>
 				</div>
+				{(this.props.notesStore.userNotes.length === 0 || this.props.notesStore.userNotes.filter(note => note.note > 0).length === 0) &&
+					<div className={classes.helpContainer}>
+						<div  className={classes.help}>
+							Pour ajouter vos évaluations, cherchez des technos dans la barre de recherche a gauche (exemple: 'Java', 'Devops' ...) et utilisez les étoiles pour vous évaluer.<br/>
+							<div className={classes.helpLine}><img src="img/active_star.png" style={{marginLeft:44}} alt="1 étoile" />&nbsp;= "Je connais un peu"</div>
+							<div className={classes.helpLine}><img src="img/active_star.png" alt="2 étoiles"/><img src="img/active_star.png" alt="2 étoiles"/>&nbsp;= "Je connais bien"</div>
+							<br/><br/>
+							<div className={classes.helpLine}><img src="img/centerOn.png" alt="centrer sur"/>&nbsp;permet de center le graph sur la techno correspondante.</div>
+						</div>
+					</div>
+				}
 				{this.state.tri === "alpha" && 
 					this.getNotesAlphaSorted()
 				}
