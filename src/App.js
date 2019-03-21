@@ -46,7 +46,12 @@ class App extends Component {
     	this.setState({ loggedIn: false });
     }
 
+    getUserNotes= () => {
+        notesStore.getUserNotes();
+    }
+
   	render() {
+  		this.getUserNotes();
 	    return (
 	      	<Provider technosStore={technosStore} searchStore={searchStore} notesStore={notesStore} userStore={userStore} routing={routingStore}>
 	      		<MuiThemeProvider theme={theme}>

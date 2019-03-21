@@ -20,14 +20,12 @@ class GraphContainer extends React.Component {
         this.props.technosStore.getTechnos();
     }
 
-    getUserNotes= () => {
-        this.props.notesStore.getUserNotes();
-    }
+    
 
 	render() {
 
 		this.getNodes();
-		this.getUserNotes();
+		
 
 		const { classes } = this.props;
 
